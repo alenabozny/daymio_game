@@ -37,49 +37,18 @@ function App() {
   //         });
   // },[]);
 
-  const stealAsSamurai = () => {};
-  const take2CoinsAsSamurai = () => {};
-  const killFor3CoinsAsNinja  = () => {};
-  const killFor7Coins = () => {};
-  const take1Coin = () => {};
-  const take3Coins = () => {};
-
-  const[yourHand, setYourHand] = React.useState({"first":{
-                                                    "persona": "geisha", 
-                                                    "state": true}, 
-                                                 "second":{
-                                                    "persona": "ninja", 
-                                                    "state": true}
-                                                });
-  const clickOptions = [{"title":"daymio_1", "message":"Take 3 coinst from the bank.", "func_name": take3Coins},
-                        {"title":"samurai_1", "message":"Steal 2 coins.", "func_name": stealAsSamurai},
-                        {"title":"samurai_2", "message":"Take 2 coins from the bank.", "func_name": take2CoinsAsSamurai},
-                        {"title":"ninja_1", "message":"Kill for 3 coins.", "func_name": killFor3CoinsAsNinja},
-                        {"title":"kill", "message":"Kill for 7 coins.", "func_name": killFor7Coins},
-                        {"title":"one_coin", "message":"Take 1 coin from the bank.", "func_name": take1Coin}
-                                              ];
-
     return (
     <div>
       <Board />
       <Player
-        key={5}
+        key={4}
         avatar = "https://placehold.co/125x125"
-        name = "Adam"
-        email = "ad@shave.pl"
+        name = "You"
         card_1_state = {true}
         card_2_state = {false}
         card_1_image = "kabuki"
         card_2_image = "geisha"
       />
-      {clickOptions.map((option, id) =>(
-        <PossibleMoves
-          key={id}
-          title={option.title}
-          func_name={option.func_name}
-        />
-      ))}
-      <button id="change-state">CLICK</button>
       <p id="player-1-info"></p>
     </div>
     );
