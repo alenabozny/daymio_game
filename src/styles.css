@@ -1,0 +1,35 @@
+.card img {
+	max-width: 125px;
+	float: left;
+}
+
+.player-card {
+	float: left;
+	padding: 10px;
+}
+
+.player-card button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.player-card .card {
+	max-width: 100px;
+	display: inline;
+}
+
+.player-card .profile-img {
+	width: 200px;
+	padding: 50px;
+}
+
+.disabled {
+	opacity: 50%;
+}

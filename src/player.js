@@ -9,43 +9,22 @@ const personaImages = {"ninja": "https://freesvg.org/img/Ninja-Head.png",
     "kabuki": "https://freesvg.org/img/zeimusu-kabuki-actor.png"
   };
 
-class PlayerObj extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            avatar: props.avatar,
-            firstName: props.name,
-            email: props.email,
-            card_1_state: props.card_1_state,
-            card_1_image: props.card_1_image,
-            card_2_state: props.card_2_state,
-            card_2_image: props.card_2_image
-        }
-       }
+function Player(props) {
+    return(
+      <div className={'player-card ' + props.status} >
+          <img className="profile-img" src={props.avatar} alt="profile" />
+          <div className="user-details">
+              <p>Name: {props.name}</p>
+              <p>Number of coins: {props.coin_counter}</p>
+          </div>
+          <div className='card'>
+              { props.card_1_state === true ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
+              { props.card_2_state === true ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
+          </div>
+          <button onClick={props.onClick}>Change number of coins of {props.name}</button>
+      </div>
+    );
+  };
   
-      // Arrow function
-      changeCard1State = () => {
-        this.setState({card_1_state: !this.state.card_1_state})
-      }
 
-      render() {
-        return(
-            <div className="contact-card">
-                <img src={this.state.avatar} alt="profile" />
-                <div className="user-details">
-                    <p>Name: {this.state.firstName}</p>
-                    <p>Email: {this.state.email}</p>
-                </div>
-                <div className='cards'>
-                    { this.state.card_1_state === true ? <img src={personaImages[this.state.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
-                    { this.state.card_2_state === true ? <img src={personaImages[this.state.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
-                </div>
-                <button onClick={this.changeCard1State}></button>
-            </div>
-        );
-        }
-  }
-  
-  // end Player class
-
-export default PlayerObj;
+export default Player;
