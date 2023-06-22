@@ -3,6 +3,10 @@
 	float: left;
 }
 
+.players {
+	display: inline-block;
+}
+
 .player-card {
 	float: left;
 	padding: 10px;
@@ -21,6 +25,10 @@
   font-size: 18px;
 }
 
+.message {
+	background-color: lightgrey;
+}
+
 .player-card .card {
 	max-width: 100px;
 	display: inline;
@@ -33,4 +41,9 @@
 
 .disabled {
 	opacity: 50%;
+}
+
+.options {
+	background-color: lightgrey;
+	display: block;
 }

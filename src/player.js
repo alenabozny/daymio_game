@@ -12,7 +12,7 @@ const personaImages = {"ninja": "https://freesvg.org/img/Ninja-Head.png",
 function Player(props) {
     return(
       <div className={'player-card ' + props.status} >
-          <img className="profile-img" src={props.avatar} alt="profile" />
+          <div className='message'>{props.message}</div>
           <div className="user-details">
               <p>Name: {props.name}</p>
               <p>Number of coins: {props.coin_counter}</p>

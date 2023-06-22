@@ -40,16 +40,6 @@ function App() {
     return (
     <div>
       <Board />
-      <Player
-        key={4}
-        avatar = "https://placehold.co/125x125"
-        name = "You"
-        card_1_state = {true}
-        card_2_state = {false}
-        card_1_image = "kabuki"
-        card_2_image = "geisha"
-      />
-      <p id="player-1-info"></p>
     </div>
     );
 }
