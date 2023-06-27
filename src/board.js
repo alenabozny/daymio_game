@@ -10,26 +10,26 @@ class Board extends React.Component {
 
 	render () {
 		return(
-			<>
-			<div className='players'>
-				{game_state.players.map((player, id) =>(
-				<Player
-				  key={id}
-				  avatar={player.avatar}
-				  name={player.name}
-				  email={player.email}
-				  coin_counter={player.coin_counter}
-				  card_1_image={player.card_1_image}
-				  card_2_image={player.card_2_image}
-				  card_1_state={player.card_1_state}
-				  card_2_state={player.card_2_state}
-				  onClick={() => this.addCoinsToPlayer(id)}
-				  status={player.status}
-				  message={player.message}
-				/>
-				))}
+			<div>
+				<div className='players'>
+					{game_state.players.map((player, id) =>(
+					<Player
+					  key={id}
+					  avatar={player.avatar}
+					  name={player.name}
+					  email={player.email}
+					  coin_counter={player.coin_counter}
+					  card_1_image={player.card_1_image}
+					  card_2_image={player.card_2_image}
+					  card_1_state={player.card_1_state}
+					  card_2_state={player.card_2_state}
+					  onClick={() => this.addCoinsToPlayer(id)}
+					  status={player.status}
+					  message={player.message}
+					/>
+					))}
+				</div>
 			</div>
-			</>
 			)
 
 	};

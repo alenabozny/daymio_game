@@ -20,7 +20,7 @@ var game_state = {
         card_2_state: false,
         card_1_image: "ninja",
         card_2_image: "daymio",
-        status: "disabled",
+        status: "playing",
         coin_counter: 4,
         message:''
       },
@@ -28,7 +28,7 @@ var game_state = {
       	avatar: "https://placehold.co/125x125",
         name: "Marek",
         email: "ad@shave.pl",
-        card_1_state: true,
+        card_1_state: false,
         card_2_state: false,
         card_1_image: "daymio",
         card_2_image: "geisha",
@@ -49,7 +49,8 @@ var game_state = {
         message:''
       }],
 
-	round: 3
+	round: 3,
+  state_round: "finished"
 
     }; 
 

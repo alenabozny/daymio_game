@@ -89,35 +89,26 @@ function RenderClass2Options(props) {
         Or... you have a Kabuki to prevent the stealing.
       </button>
       <button onClick={daymio_stopFromTaking2Coins(props.round)}>
-        Stop player {game_state.players[props.round].name} from taking two coins.
+        Stop player {props.current_player.name} from taking two coins.
       </button>
     </>
   )
 };
 
-function AddCoinsToPlayer(props) {
-  const players = game_state.players.slice();
-  players[props.round].coin_counter += 1;
-  this.setState({players: players})
-};
-
-// global options
-
 function CountDown(props) {
     // Set the date we're counting down to
   var counter = props.seconds;
 
-
   // Update the count down every 1 second
   var x = setInterval(function() {
-  document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
+    document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
 
-  if (counter < 0) {
-      clearInterval(x);
-      document.getElementById("counter").innerHTML = 'Player ' + props.username + ' finished the round.';
-    }
+    if (counter < 0) {
+        clearInterval(x);
+        document.getElementById("counter").innerHTML = 'Player ' + props.username + ' finished the round.';
+      }
 
-  counter -= 1;
+    counter -= 1;
   }, 1000);
 };
 
@@ -126,8 +117,8 @@ function ChooseAction(props) {
   var oponents = [...props.players]; // hard copy the players to later create the oponents list
   const current_player_id = props.newround;
   const random_number = Math.random();
+  
   var action_id = 0;
-  var message = ['',''];
 
   // 0 is for taking 1 coin
   // 1 is for taking 2 coins
@@ -137,11 +128,12 @@ function ChooseAction(props) {
   // 5 is for killing for 7 coins
   // 6 is for killing for 3 coins
 
-  console.log(oponents);
-  oponents.splice(current_player_id-1, 1); // remove current player from the oponents list
+  var message = ['',''];
+
+  oponents.splice(current_player_id, 1); // remove current player from the oponents list
   const oponent = oponents[Math.floor(Math.random()*oponents.length)]; // randomly choose an oponent for the current player
 
-  if (random_number<0.5) {
+  if (random_number<(1/7)) {
     // player wants to take 1 coin from the bank
     action_id = 0;
     message[0] = "I'm gonna take 1 coin from the bank.";
@@ -149,21 +141,21 @@ function ChooseAction(props) {
     players[current_player_id] = {...players[current_player_id], 
                                   coin_counter: players[current_player_id].coin_counter += 1}
 
-  } else if (random_number<0.99) {
+  } else if (random_number<(2/7)) {
     // player wants to take 2 coins from the bank
     action_id = 1;
     message[0] = "I'm gonna take 2 coins from the bank.";
     message[1] = "I just took 2 coins from the bank.";
     players[current_player_id] = {...players[current_player_id], 
                                   coin_counter: players[current_player_id].coin_counter += 2}  
-  } else if (random_number<0.99) {
+  } else if (random_number<(3/7)) {
     // player wants to take 3 coins from the bank -!!!- DAYMIO -!!!-
     action_id = 2;
     message[0] = "I'm gonna use Daymio superpowers and take 3 coins from the bank.";
     message[1] = "I just took 3 coins from the bank.";
     players[current_player_id] = {...players[current_player_id], 
                                   coin_counter: players[current_player_id].coin_counter += 3}  
-    } else if (random_number<0.99) {
+    } else if (random_number<(4/7)) {
     // player wants to steal 2 coins from ... -!!!- SAMURAI -!!!-
     action_id = 3;
     message[0] = "I'm gonna take 2 coins from the bank.";
@@ -172,25 +164,25 @@ function ChooseAction(props) {
                                   coin_counter: players[current_player_id].coin_counter += 2}
     // TODO: -= 2 for the oponent
 
-  }  else if (random_number<0.99) {
+  }  else if (random_number<(5/7)) {
     // player wants to change the cards -!!!- KABUKI -!!!-
     action_id = 4;
     message[0] = "I'm gonna user KABUKI superpowers and change my cards.";
     message[1] = "I just changed my cards!";
     // TODO: change cards for the current player; remaining: create the deck
 
-  } else if (random_number<0.99) {
+  } else if (random_number<(6/7)) {
     // player wants to kill ... for 7 coins
     action_id = 5;
-    message[0] = "I'm gonna kill " + oponent.username + " for 7 coins";
-    message[1] = "I just killed " + oponent.username + "!";
+    message[0] = "I'm gonna kill " + oponent.name + " for 7 coins";
+    message[1] = "I just killed " + oponent.name + "!";
     // TODO: Check if the current player has 7 coins, kill the oponent
 
-  } else if (random_number<0.99) {
+  } else {
     // player wants to kill for 3 coins -!!!- NINJA -!!!-
     action_id = 6;
-    message[0] = "I'm gonna use NINJA superpowers and kill " + oponent.username + " for 3 coins";
-    message[1] = "I just killed " + oponent.username + "!";
+    message[0] = "I'm gonna use NINJA superpowers and kill " + oponent.name + " for 3 coins";
+    message[1] = "I just killed " + oponent.name + "!";
     // TODO: Check if the current player has 3 coins, attempt to kill the oponent
   };
 
@@ -207,38 +199,42 @@ function App() {
   const StartNextRound = () => {
     const newround = (state.round + 1) % 4;
     const players = state.players;
+    const seconds = 4;
 
     var next_action = ChooseAction({newround: newround,
                                      players: players});
 
     players[newround].message = next_action.initial_message;
     setGameState(previousState => {
-      return { ...previousState, round: newround }
+      return { ...previousState, round: newround, state_round: 'ongoing' }
     });
 
-    CountDown({seconds: 5,
+    CountDown({seconds: seconds,
                 username: players[newround].name});
       
     const timeout = setTimeout(() => {
       players[newround].message = next_action.postround_message;
-      // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT!
+      // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
       setGameState(previousState => {
-        return { ...previousState, players: players }
+        return { ...previousState, players: players, state_round: 'finished' }
       });
-    }, 5 * 1000);
+    }, (seconds+1) * 1000);
   };
 
 
   return (
   <>
     <h1>Round of player: {state.players[state.round].name}</h1>
+    <div className='options'>
+      { state.state_round === 'ongoing' ? RenderClass2Options({round: state.round, current_player: state.players[state.round]}) : ''}
+    </div>
     <div id='counter'></div>
     <button onClick={ StartNextRound }> Start next round </button>
     <div>
       <Board />
     </div>
-        <div className='options'>
-      { game_state.round === 3 ? RenderClass1Options() : RenderClass2Options(game_state) }
+    <div className='options'>
+      { state.round === 3 ? RenderClass1Options() : '' }
     </div>
   </>
   );
