@@ -6,38 +6,6 @@ import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
 
-function  daymio_take3Coins() {}
-
-function  kabuki_changeCards() {}
-
-  // options to take on other player
-
-function  samurai_steal2Coins(player_id) {}
-
-function  killFor7 (player_id) {}
-
-function  ninja_killFor3 (player_id) {}
-
-  // options to take during other player's round
-
-function  geisha_defendNinjaAttack (player_id) {}
-
-function  samurai_defendStealing (player_id) {}
-
-function  kabuki_defendStealing (player_id) {}
-
-function  daymio_stopFromTaking2Coins (player_id) {}
-
-  // non-user-generated actions
-
-function Take1Coin() {
-
-  let players = [...game_state.players];
-  players[game_state.round].coin_counter += 1;
-  // setGameState({players: players, round: state.round});
-  // StartNextRound();
-};
-
 function RenderClass1Options(props) {
   // const [state, setGameState] = useState(game_state);
 
@@ -117,7 +85,7 @@ function ChooseAction(props) {
   var oponents = [...props.players]; // hard copy the players to later create the oponents list
   const current_player_id = props.newround;
   const random_number = Math.random();
-  
+
   var action_id = 0;
 
   // 0 is for taking 1 coin
