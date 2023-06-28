@@ -50,7 +50,7 @@ var game_state = {
       }],
 
 	round: 3,
-  state_round: "finished"
+  action_ongoing: false
 
     }; 
 

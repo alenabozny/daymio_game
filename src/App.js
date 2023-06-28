@@ -6,6 +6,27 @@ import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
 
+function Take1Coin() {
+  let players = [...game_state.players];
+  players[3].coin_counter += 1;
+
+  return players;
+};
+
+function daymio_take3Coins() {
+
+};
+
+function kabuki_changeCards() {
+
+};
+
+function samurai_steal2Coins(oponent_id) {};
+
+function killFor7(oponent_id) {};
+
+function ninja_killFor3(oponent_id) {};
+
 function RenderClass1Options(props) {
   // const [state, setGameState] = useState(game_state);
 
@@ -16,9 +37,9 @@ function RenderClass1Options(props) {
   /* passing the function to onClick instead of calling it */
     <>
       <br />
-      <button onClick={() => Take1Coin(game_state.round-1)}>Take one coin from the bank.</button>
-      <button onClick={daymio_take3Coins()}>Take 3 coins from the bank.</button>
-      <button onClick={kabuki_changeCards()}>Change cards.</button>
+      <button onClick={() => Take1Coin()}>Take one coin from the bank.</button>
+      <button onClick={() => daymio_take3Coins()}>Take 3 coins from the bank.</button>
+      <button onClick={() => kabuki_changeCards()}>Change cards.</button>
       
       <h4>Steal 2 coins from</h4>
       {other_players.map((player, id) =>(
@@ -40,25 +61,6 @@ function RenderClass1Options(props) {
           {player.name}
         </button>
       ))}
-    </>
-  )
-};
-
-function RenderClass2Options(props) {
-  return (
-    <>
-      <button onClick={geisha_defendNinjaAttack(props.round)}>
-        Defend yourself with a Geisha skill!
-      </button>
-      <button onClick={samurai_defendStealing(props.round)}>
-        You have (?) a Samurai - do not let them steal from you!
-      </button>
-      <button onClick={kabuki_defendStealing(props.round)}>
-        Or... you have a Kabuki to prevent the stealing.
-      </button>
-      <button onClick={daymio_stopFromTaking2Coins(props.round)}>
-        Stop player {props.current_player.name} from taking two coins.
-      </button>
     </>
   )
 };
@@ -174,7 +176,7 @@ function App() {
 
     players[newround].message = next_action.initial_message;
     setGameState(previousState => {
-      return { ...previousState, round: newround, state_round: 'ongoing' }
+      return { ...previousState, round: newround, action_ongoing: next_action.action_id }
     });
 
     CountDown({seconds: seconds,
@@ -184,17 +186,64 @@ function App() {
       players[newround].message = next_action.postround_message;
       // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
       setGameState(previousState => {
-        return { ...previousState, players: players, state_round: 'finished' }
+        return { ...previousState, players: players, action_ongoing: false }
       });
     }, (seconds+1) * 1000);
   };
+
+  const RenderCounteraction = (props) => {
+
+    let counteraction_message = '';
+    const action_ongoing = props.state.action_ongoing;
+    const round = props.state.round;
+    const players = props.state.players;
+
+      // 0 is for taking 1 coin
+      // 1 is for taking 2 coins
+      // 2 is for taking 3 coins
+      // 3 is for stealing 2 coins
+      // 4 is for changing cards
+      // 5 is for killing for 7 coins
+      // 6 is for killing for 3 coins
+
+    if (action_ongoing === 1) {
+
+      counteraction_message = "(pretend that) you have a Daymio, let " + players[round].name + " not take 2 coins!";
+
+    } else if (action_ongoing === 2) {
+
+      counteraction_message = "Check if " + players[round].name + " has Daymio.";
+
+    } else if (action_ongoing === 3) {
+
+      counteraction_message = "Check if " + players[round].name + " has Samurai";
+
+    } else if (action_ongoing === 4) {
+
+      counteraction_message = "Check if " + players[round].name + " has Kabuki";
+
+    } else if (action_ongoing === 6) {
+
+      counteraction_message = "Check if " + players[round].name + " has Ninja";
+
+    } else {
+      return '';
+    };
+
+
+    return (
+      <>
+        <button> {counteraction_message} </button>
+      </>
+    )
+};
 
 
   return (
   <>
     <h1>Round of player: {state.players[state.round].name}</h1>
     <div className='options'>
-      { state.state_round === 'ongoing' ? RenderClass2Options({round: state.round, current_player: state.players[state.round]}) : ''}
+       { state.action_ongoing !== false ? RenderCounteraction({state: state}) : ''}
     </div>
     <div id='counter'></div>
     <button onClick={ StartNextRound }> Start next round </button>
