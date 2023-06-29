@@ -21,10 +21,9 @@ class Board extends React.Component {
 					  coin_counter={player.coin_counter}
 					  card_1_image={player.card_1_image}
 					  card_2_image={player.card_2_image}
-					  card_1_state={player.card_1_state}
-					  card_2_state={player.card_2_state}
-					  onClick={() => this.addCoinsToPlayer(id)}
-					  status={player.status}
+					  card_1_dead={player.card_1_dead}
+					  card_2_dead={player.card_2_dead}
+					  dead={player.dead}
 					  message={player.message}
 					/>
 					))}

@@ -39,8 +39,12 @@
 	padding: 50px;
 }
 
-.disabled {
+.true {
 	opacity: 50%;
+}
+
+.false {
+	opacity: 100%;
 }
 
 .options {

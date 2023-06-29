@@ -10,16 +10,18 @@ const personaImages = {"ninja": "https://freesvg.org/img/Ninja-Head.png",
   };
 
 function Player(props) {
+    console.log(props.message);
+
     return(
-      <div className={'player-card ' + props.status} >
+      <div className={'player-card ' + props.dead} >
           <div className='message'>{props.message}</div>
           <div className="user-details">
               <p>Name: {props.name}</p>
               <p>Number of coins: {props.coin_counter}</p>
           </div>
           <div className='card'>
-              { props.card_1_state === true ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
-              { props.card_2_state === true ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
+              { props.card_1_dead === true ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
+              { props.card_2_dead === true ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
           </div>
           <button onClick={props.onClick}>Change number of coins of {props.name}</button>
       </div>

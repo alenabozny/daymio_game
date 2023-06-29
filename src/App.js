@@ -6,24 +6,14 @@ import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
 
-function Take1Coin() {
-  let players = [...game_state.players];
-  players[3].coin_counter += 1;
+// TODO: refactor - change players from Array to Object and add unique KEY for each player
 
-  return players;
-};
-
-function daymio_take3Coins() {
-
-};
 
 function kabuki_changeCards() {
 
 };
 
 function samurai_steal2Coins(oponent_id) {};
-
-function killFor7(oponent_id) {};
 
 function ninja_killFor3(oponent_id) {};
 
@@ -61,42 +51,6 @@ function KillFor3Buttons(props) {
   )
 }
 
-function KillFor7Buttons(props) {
-  let oponents = props.oponents;
-
-  return (
-    <>
-    <h4>Kill (for 7 coins) </h4>
-    {oponents.map((oponent, id) =>(
-        <button onClick={killFor7(oponent.id)}>
-          {oponent.name}
-        </button>
-      ))}
-    </>
-  )
-}
-
-function RenderPossibleActions(props) {
-  let players = props.state.players;
-  let oponents = [...players]; // hard copy the players to later create the oponents list
-  oponents.splice(3, 1);
-
-  return (
-  /* passing the function to onClick instead of calling it */
-    <>
-      <br />
-      { HasNCoins(players[3], 10) ? '' : <button onClick={() => Take1Coin()}>Take one coin from the bank.</button> }
-      { HasNCoins(players[3], 8) ? '' : <button onClick={() => daymio_take3Coins()}>(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
-
-      <button onClick={() => kabuki_changeCards()}>(Pretend that) you have a Kabuki, change your cards.</button>
-      
-      { HasNCoins(players[3],8) ? '' : <Steal2CoinsButtons oponents={oponents} />}
-      { HasNCoins(players[3], 3) ? <KillFor3Buttons oponents={oponents} /> : ''}
-      { HasNCoins(players[3], 7) ? <KillFor7Buttons oponents={oponents} /> : ''}
-
-    </>
-  )
-};
 
 function CountDown(props) {
     // Set the date we're counting down to
@@ -162,7 +116,7 @@ function ChooseAction(props) {
     // player wants to steal 2 coins from ... -!!!- SAMURAI -!!!-
     action_id = 3;
     message[0] = "I'm gonna take 2 coins from the bank.";
-    message[1] = "I just took 2 coins from the bank.";
+    message[1] = 'I just stole 2 coins from' + oponent.name +'.';
     players[current_player_id] = {...players[current_player_id], 
                                   coin_counter: players[current_player_id].coin_counter += 2}
     // TODO: -= 2 for the oponent
@@ -199,29 +153,106 @@ function ChooseAction(props) {
 function App() {
   const [state, setGameState] = useState(game_state);
 
+  const KillFor7Buttons = props => {
+    let oponents = props.oponents;
+
+    return (
+      <>
+      <h4>Kill (for 7 coins) </h4>
+      {oponents.map((oponent, id) =>(
+          <button onClick={() => kill(oponents, id)}>
+            {oponent.name}
+          </button>
+        ))}
+      </>
+    )
+  };
+
+  const TakeNCoins = (N) => {
+    let players = state.players;
+    players[3].coin_counter += N;
+
+    setGameState(previousState => {
+      return { ...previousState, players: players }
+    });
+
+    StartNextRound();
+  };
+
+
+  const kill = (oponents, oponent_id) => {
+    if (!oponents[oponent_id].card_1_dead) {
+      oponents[oponent_id].card_1_dead = true;  
+    } else if (!oponents[oponent_id].card_2_dead) {
+      oponents[oponent_id].card_2_dead = true;
+      oponents[oponent_id].dead = true;
+    }
+    
+    oponents.splice(3, 0, state.players[3]);
+
+    setGameState(previousState => {
+      return { ...previousState, players: oponents }
+    });
+
+    StartNextRound();
+  };
+
   const StartNextRound = () => {
     const newround = (state.round + 1) % 4;
     const players = state.players;
     const seconds = 4;
 
-    var next_action = ChooseAction({newround: newround,
-                                     players: players});
-
-    players[newround].message = next_action.initial_message;
-    setGameState(previousState => {
-      return { ...previousState, round: newround, action_ongoing: next_action.action_id }
-    });
-
-    CountDown({seconds: seconds,
-                username: players[newround].name});
-      
-    const timeout = setTimeout(() => {
-      players[newround].message = next_action.postround_message;
-      // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
+    if (newround == 3) {
+      document.getElementById("counter").innerHTML = 'Your round is ongoing.';
       setGameState(previousState => {
-        return { ...previousState, players: players, action_ongoing: false }
+        return { ...previousState, round: newround, action_ongoing: true }
       });
-    }, (seconds+1) * 1000);
+      document.getElementById("next_round_button").innerHTML = 'Finish your round';
+    } else {
+      var next_action = ChooseAction({newround: newround,
+                                       players: players});
+
+      players[newround].message = next_action.initial_message;
+      setGameState(previousState => {
+        return { ...previousState, round: newround, action_ongoing: next_action.action_id }
+      });
+
+      CountDown({seconds: seconds,
+                 username: players[newround].name});
+        
+      const timeout = setTimeout(() => {
+        players[newround].message = next_action.postround_message;
+        // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
+        setGameState(previousState => {
+          return { ...previousState, players: players, action_ongoing: false }
+        });
+      }, (seconds+1) * 1000);
+      document.getElementById("next_round_button").innerHTML = 'Start next round';
+    };
+  };
+
+  const RenderPossibleActions = props => {
+
+  let players = props.state.players;
+  let oponents = [...players]; // hard copy the players to later create the oponents list
+  oponents.splice(3, 1);
+
+  return (
+  /* passing the function to onClick instead of calling it */
+      <>
+        <br />
+        { HasNCoins(players[3], 10) ? '' : <button onClick={() => TakeNCoins(1) } > Take one coin from the bank.</button> }
+        { HasNCoins(players[3], 9) ? '' : <button onClick={() => TakeNCoins(2) } > Take two coins from the bank.</button> }
+        { HasNCoins(players[3], 8) ? '' : <button onClick={() => TakeNCoins(3)}>(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
+
+        <button onClick={() => kabuki_changeCards()}>(Pretend that) you have a Kabuki, change your cards.</button>
+        
+        { HasNCoins(players[3],8) ? '' : <Steal2CoinsButtons oponents={oponents} />}
+        { HasNCoins(players[3], 3) ? <KillFor3Buttons oponents={oponents} /> : ''}
+        { HasNCoins(players[3], 7) ? <KillFor7Buttons oponents={oponents} /> : ''}
+
+      </>
+    )
   };
 
   const RenderCounteraction = (props) => {
@@ -276,10 +307,10 @@ function App() {
   <>
     <h1>Round of player: {state.players[state.round].name}</h1>
     <div className='options'>
-       { state.action_ongoing !== false ? RenderCounteraction({state: state}) : ''}
+       { state.action_ongoing !== false && state.round != 3 ? RenderCounteraction({state: state}) : ''}
     </div>
     <div id='counter'></div>
-    <button onClick={ StartNextRound }> Start next round </button>
+    <button id='next_round_button' onClick={() => StartNextRound() }> Start next round </button>
     <div>
       <Board />
     </div>
