@@ -27,40 +27,73 @@ function killFor7(oponent_id) {};
 
 function ninja_killFor3(oponent_id) {};
 
-function RenderClass1Options(props) {
-  // const [state, setGameState] = useState(game_state);
+function HasNCoins(player, N) {
+  return player.coin_counter >= N ? true : false ;
+}
 
-  let players = [...game_state.players]; // spreading will return a new array
-  let other_players = players.slice(0,3);
+function Steal2CoinsButtons(props) {
+  let oponents = props.oponents;
+
+  return (
+    <>
+    <h4>Steal 2 coins from</h4>
+        {oponents.map((oponent, id) =>(
+        <button onClick={ninja_killFor3(oponent.id)}>
+          {oponent.name}
+        </button>
+      ))}
+    </>
+  )
+}
+
+function KillFor3Buttons(props) {
+  let oponents = props.oponents;
+
+  return (
+    <>
+    <h4>Kill as Ninja (for 3 coins) </h4>
+    {oponents.map((oponent, id) =>(
+        <button onClick={ninja_killFor3(oponent.id)}>
+          {oponent.name}
+        </button>
+      ))}
+    </>
+  )
+}
+
+function KillFor7Buttons(props) {
+  let oponents = props.oponents;
+
+  return (
+    <>
+    <h4>Kill (for 7 coins) </h4>
+    {oponents.map((oponent, id) =>(
+        <button onClick={killFor7(oponent.id)}>
+          {oponent.name}
+        </button>
+      ))}
+    </>
+  )
+}
+
+function RenderPossibleActions(props) {
+  let players = props.state.players;
+  let oponents = [...players]; // hard copy the players to later create the oponents list
+  oponents.splice(3, 1);
 
   return (
   /* passing the function to onClick instead of calling it */
     <>
       <br />
-      <button onClick={() => Take1Coin()}>Take one coin from the bank.</button>
-      <button onClick={() => daymio_take3Coins()}>Take 3 coins from the bank.</button>
-      <button onClick={() => kabuki_changeCards()}>Change cards.</button>
+      { HasNCoins(players[3], 10) ? '' : <button onClick={() => Take1Coin()}>Take one coin from the bank.</button> }
+      { HasNCoins(players[3], 8) ? '' : <button onClick={() => daymio_take3Coins()}>(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
+
+      <button onClick={() => kabuki_changeCards()}>(Pretend that) you have a Kabuki, change your cards.</button>
       
-      <h4>Steal 2 coins from</h4>
-      {other_players.map((player, id) =>(
-      <button onClick={samurai_steal2Coins(player.id)}>
-          {player.name}
-        </button>
-    ))}
+      { HasNCoins(players[3],8) ? '' : <Steal2CoinsButtons oponents={oponents} />}
+      { HasNCoins(players[3], 3) ? <KillFor3Buttons oponents={oponents} /> : ''}
+      { HasNCoins(players[3], 7) ? <KillFor7Buttons oponents={oponents} /> : ''}
 
-    <h4>Kill </h4>
-      {other_players.map((player, id) =>(
-      <button onClick={killFor7(player.id)}>
-          {player.name}
-        </button>
-    ))}
-
-    <h4>Kill as Ninja (for 3 coins) </h4>
-    {other_players.map((player, id) =>(
-        <button onClick={ninja_killFor3(player.id)}>
-          {player.name}
-        </button>
-      ))}
     </>
   )
 };
@@ -251,7 +284,7 @@ function App() {
       <Board />
     </div>
     <div className='options'>
-      { state.round === 3 ? RenderClass1Options() : '' }
+      { state.round === 3 ? RenderPossibleActions({state: state}) : '' }
     </div>
   </>
   );

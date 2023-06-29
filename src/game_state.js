@@ -45,7 +45,7 @@ var game_state = {
         card_1_image: "daymio",
         card_2_image: "geisha",
         status: "playing",
-        coin_counter: 0,
+        coin_counter: 10,
         message:''
       }],
 
