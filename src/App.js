@@ -6,9 +6,6 @@ import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
 
-// TODO: refactor - change players from Array to Object and add unique KEY for each player
-
-
 function kabuki_changeCards() {
 
 };
@@ -35,22 +32,6 @@ function Steal2CoinsButtons(props) {
     </>
   )
 }
-
-function KillFor3Buttons(props) {
-  let oponents = props.oponents;
-
-  return (
-    <>
-    <h4>Kill as Ninja (for 3 coins) </h4>
-    {oponents.map((oponent, id) =>(
-        <button onClick={ninja_killFor3(oponent.id)}>
-          {oponent.name}
-        </button>
-      ))}
-    </>
-  )
-}
-
 
 function CountDown(props) {
     // Set the date we're counting down to
@@ -153,6 +134,21 @@ function ChooseAction(props) {
 function App() {
   const [state, setGameState] = useState(game_state);
 
+  const KillFor3Buttons = props => {
+    let oponents = props.oponents;
+
+    return (
+      <>
+      <h4>Kill as Ninja (for 3 coins) </h4>
+      {oponents.map((oponent, id) =>(
+          <button onClick={() => KillAsNinja(oponents, id)}>
+            {oponent.name}
+          </button>
+        ))}
+      </>
+    )
+  }
+
   const KillFor7Buttons = props => {
     let oponents = props.oponents;
 
@@ -160,7 +156,7 @@ function App() {
       <>
       <h4>Kill (for 7 coins) </h4>
       {oponents.map((oponent, id) =>(
-          <button onClick={() => kill(oponents, id)}>
+          <button onClick={() => kill(oponents, id, 7)}>
             {oponent.name}
           </button>
         ))}
@@ -180,7 +176,7 @@ function App() {
   };
 
 
-  const kill = (oponents, oponent_id) => {
+  const kill = (oponents, oponent_id, num_blood_money) => {
     if (!oponents[oponent_id].card_1_dead) {
       oponents[oponent_id].card_1_dead = true;  
     } else if (!oponents[oponent_id].card_2_dead) {
@@ -189,6 +185,7 @@ function App() {
     }
     
     oponents.splice(3, 0, state.players[3]);
+    oponents[3].coin_counter -= num_blood_money;
 
     setGameState(previousState => {
       return { ...previousState, players: oponents }
@@ -197,18 +194,70 @@ function App() {
     StartNextRound();
   };
 
+  const OnePersonaDies = (player_id) => {
+    var players = state.players;
+
+    if (!players[player_id].card_1_dead) {
+      players[player_id].card_1_dead = true;  
+    } else if (!players[player_id].card_2_dead) {
+      players[player_id].card_2_dead = true;
+      players[player_id].dead = true;
+      if (player_id ===3) {
+        alert("Sorry, you are out of the game. You can start a new one.");
+        setGameState(game_state);
+      }
+    };
+
+    return players;
+  };
+
+  const KillAsNinja = (oponents, oponent_id) => {
+    const do_oponent_check = Math.random() > 0.9 ? true : false;
+    var new_game_state = game_state;
+
+    do_oponent_check ? new_game_state = OponentChecks(oponent_id, 'ninja') : kill(oponents, oponent_id, 3);
+
+    setGameState(new_game_state);
+    StartNextRound();
+  };
+
+  const OponentChecks = (oponent_id, persona) => {
+    alert('Oponent wants to know if you have '+ persona);
+    var new_game_state = state;
+    var players = state.players;
+
+    // if you have a {persona} then the oponent dies
+    if (players[3].card_1_image === persona && players[3].card_2_image === persona) {
+ 
+      players = OnePersonaDies(oponent_id);
+      new_game_state = {...state, players: players};
+
+    // if you don't... then you die
+    } else {
+
+      players = OnePersonaDies(3);
+      new_game_state = {...state, players: players};
+
+    };
+
+    return new_game_state;
+  };
+
   const StartNextRound = () => {
     const newround = (state.round + 1) % 4;
     const players = state.players;
     const seconds = 4;
 
-    if (newround == 3) {
+    if (newround == 3) { // if the round belongs to the active user (YOU)
+
       document.getElementById("counter").innerHTML = 'Your round is ongoing.';
       setGameState(previousState => {
         return { ...previousState, round: newround, action_ongoing: true }
       });
       document.getElementById("next_round_button").innerHTML = 'Finish your round';
-    } else {
+
+    } else { // if the round belongs to an oponent
+
       var next_action = ChooseAction({newround: newround,
                                        players: players});
 
@@ -228,6 +277,7 @@ function App() {
         });
       }, (seconds+1) * 1000);
       document.getElementById("next_round_button").innerHTML = 'Start next round';
+
     };
   };
 

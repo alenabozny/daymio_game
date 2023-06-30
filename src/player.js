@@ -23,7 +23,6 @@ function Player(props) {
               { props.card_1_dead === true ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
               { props.card_2_dead === true ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
           </div>
-          <button onClick={props.onClick}>Change number of coins of {props.name}</button>
       </div>
     );
   };
