@@ -212,22 +212,22 @@ function App() {
   };
 
   const KillAsNinja = (oponents, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.9 ? true : false;
+    const do_oponent_check = Math.random() > 0.1 ? true : false;
     var new_game_state = game_state;
 
-    do_oponent_check ? new_game_state = OponentChecks(oponent_id, 'ninja') : kill(oponents, oponent_id, 3);
+    do_oponent_check ? new_game_state = OponentChecks(3, oponent_id, 'ninja') : kill(oponents, oponent_id, 3);
 
     setGameState(new_game_state);
     StartNextRound();
   };
 
-  const OponentChecks = (oponent_id, persona) => {
+  const OponentChecks = (checker_id, oponent_id, persona) => {
     alert('Oponent wants to know if you have '+ persona);
     var new_game_state = state;
     var players = state.players;
 
     // if you have a {persona} then the oponent dies
-    if (players[3].card_1_image === persona && players[3].card_2_image === persona) {
+    if (players[checker_id].card_1_image === persona && players[checker_id].card_2_image === persona) {
  
       players = OnePersonaDies(oponent_id);
       new_game_state = {...state, players: players};
@@ -276,8 +276,6 @@ function App() {
           return { ...previousState, players: players, action_ongoing: false }
         });
       }, (seconds+1) * 1000);
-      document.getElementById("next_round_button").innerHTML = 'Start next round';
-
     };
   };
 
@@ -360,7 +358,7 @@ function App() {
        { state.action_ongoing !== false && state.round != 3 ? RenderCounteraction({state: state}) : ''}
     </div>
     <div id='counter'></div>
-    <button id='next_round_button' onClick={() => StartNextRound() }> Start next round </button>
+    <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
     <div>
       <Board />
     </div>

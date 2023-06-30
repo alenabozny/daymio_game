@@ -51,3 +51,7 @@
 	background-color: lightgrey;
 	display: block;
 }
+
+.disable {
+	display: none;
+}
