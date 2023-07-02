@@ -20,8 +20,8 @@ function Player(props) {
               <p>Number of coins: {props.coin_counter}</p>
           </div>
           <div className='card'>
-              { props.card_1_dead === true ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
-              { props.card_2_dead === true ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
+              { props.card_1_dead ? <img src={personaImages[props.card_1_image]} alt="first-card" /> : <img src={cardCover} alt="first-card" />}
+              { props.card_2_dead ? <img src={personaImages[props.card_2_image]} alt="second-card" /> : <img src={cardCover} alt="second-card" />}
           </div>
       </div>
     );

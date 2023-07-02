@@ -40,12 +40,12 @@ var game_state = {
       	avatar: "https://placehold.co/125x125",
         name: "You",
         email: "ad@shave.pl",
-        card_1_dead: true,
-        card_2_dead: false,
-        card_1_image: "daymio",
+        card_1_dead: false,
+        card_2_dead: true,
+        card_1_image: "samurai",
         card_2_image: "geisha",
         dead: false,
-        coin_counter: 10,
+        coin_counter: 6,
         message:''
       }],
 

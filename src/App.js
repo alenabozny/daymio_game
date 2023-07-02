@@ -10,27 +10,8 @@ function kabuki_changeCards() {
 
 };
 
-function samurai_steal2Coins(oponent_id) {};
-
-function ninja_killFor3(oponent_id) {};
-
 function HasNCoins(player, N) {
   return player.coin_counter >= N ? true : false ;
-}
-
-function Steal2CoinsButtons(props) {
-  let oponents = props.oponents;
-
-  return (
-    <>
-    <h4>Steal 2 coins from</h4>
-        {oponents.map((oponent, id) =>(
-        <button onClick={ninja_killFor3(oponent.id)}>
-          {oponent.name}
-        </button>
-      ))}
-    </>
-  )
 }
 
 function CountDown(props) {
@@ -164,6 +145,19 @@ function App() {
     )
   };
 
+  const Steal2CoinsButtons = props => {
+    let oponents = props.oponents;
+
+    return (
+      <>
+      <h4>Steal 2 coins from</h4>
+          {oponents.map((oponent, id) =>(
+            oponent.coin_counter >= 2 ? <button onClick={() => Steal2Coins(3, id)}> {oponent.name} </button> : ''
+        ))}
+      </>
+    )
+  }
+
   const TakeNCoins = (N) => {
     let players = state.players;
     players[3].coin_counter += N;
@@ -198,44 +192,78 @@ function App() {
     var players = state.players;
 
     if (!players[player_id].card_1_dead) {
-      players[player_id].card_1_dead = true;  
+
+      players[player_id].card_1_dead = true; 
+      setGameState({...state, players: players}); 
+
     } else if (!players[player_id].card_2_dead) {
+
       players[player_id].card_2_dead = true;
       players[player_id].dead = true;
+
       if (player_id ===3) {
+
         alert("Sorry, you are out of the game. You can start a new one.");
-        setGameState(game_state);
       }
+      setGameState({...state, players: players}); 
     };
 
     return players;
   };
 
-  const KillAsNinja = (oponents, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.1 ? true : false;
-    var new_game_state = game_state;
+  const Steal = (robber_id, oponent_id) => {
+    var players = state.players;
 
-    do_oponent_check ? new_game_state = OponentChecks(3, oponent_id, 'ninja') : kill(oponents, oponent_id, 3);
+    players[robber_id].coin_counter += 2;
+    players[oponent_id].coin_counter -= 2;
+
+    return {...state, players: players}
+  };
+
+  const Steal2Coins = (robber_id, oponent_id) => {
+    const do_oponent_check = Math.random() > 0.1 ? true : false;
+    var new_game_state = state;
+
+    do_oponent_check ? new_game_state = OponentChecks(oponent_id, robber_id, 'samurai') : new_game_state = Steal(robber_id, oponent_id);
+
+    setGameState(new_game_state);
+    StartNextRound();
+  }
+
+  const KillAsNinja = (oponents, oponent_id) => {
+    const do_oponent_check = Math.random() > 0.5 ? true : false;
+    var new_game_state = state;
+
+    do_oponent_check ? new_game_state = OponentChecks(oponent_id, 3, 'ninja') : kill(oponents, oponent_id, 3);
 
     setGameState(new_game_state);
     StartNextRound();
   };
 
   const OponentChecks = (checker_id, oponent_id, persona) => {
-    alert('Oponent wants to know if you have '+ persona);
     var new_game_state = state;
     var players = state.players;
+    alert(players[checker_id].name + ' wants to know if ' + players[oponent_id].name + ' have '+ persona);
+    var oponent_1_image = players[oponent_id].card_1_image;
+    var oponent_1_dead = players[oponent_id].card_1_dead;
+    var oponent_2_image = players[oponent_id].card_2_image;
+    var oponent_2_dead = players[oponent_id].card_2_dead;
 
-    // if you have a {persona} then the oponent dies
-    if (players[checker_id].card_1_image === persona && players[checker_id].card_2_image === persona) {
+    // if the oponent have a {persona}, and the persona is not dead, then the checker dies
+    if ((oponent_1_image === persona && !oponent_1_dead ) 
+        ||
+        (oponent_2_image === persona && !oponent_2_dead )) 
+    {
  
-      players = OnePersonaDies(oponent_id);
+      players = OnePersonaDies(checker_id);
+      alert(players[checker_id].name + ' dies, because of the lost checking action.');
       new_game_state = {...state, players: players};
 
-    // if you don't... then you die
+    // if don't... then the oponent dies
     } else {
 
-      players = OnePersonaDies(3);
+      players = OnePersonaDies(oponent_id);
+      alert(players[oponent_id].name + ' dies, because of the lost checking action.');
       new_game_state = {...state, players: players};
 
     };
@@ -248,7 +276,11 @@ function App() {
     const players = state.players;
     const seconds = 4;
 
-    if (newround == 3) { // if the round belongs to the active user (YOU)
+    if (players[3].dead) { // if you lost the game
+
+      return ( "" );
+
+    } else if (newround == 3) { // if the round belongs to the active user (YOU)
 
       document.getElementById("counter").innerHTML = 'Your round is ongoing.';
       setGameState(previousState => {
@@ -291,7 +323,7 @@ function App() {
         <br />
         { HasNCoins(players[3], 10) ? '' : <button onClick={() => TakeNCoins(1) } > Take one coin from the bank.</button> }
         { HasNCoins(players[3], 9) ? '' : <button onClick={() => TakeNCoins(2) } > Take two coins from the bank.</button> }
-        { HasNCoins(players[3], 8) ? '' : <button onClick={() => TakeNCoins(3)}>(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
+        { HasNCoins(players[3], 8) ? '' : <button onClick={() => TakeNCoins(3) } >(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
 
         <button onClick={() => kabuki_changeCards()}>(Pretend that) you have a Kabuki, change your cards.</button>
         
@@ -303,9 +335,14 @@ function App() {
     )
   };
 
+  const EmptyCounteraction = () => {
+    console.log("dupa")
+  };
+
   const RenderCounteraction = (props) => {
 
     let counteraction_message = '';
+    let on_click_counteraction = EmptyCounteraction;
     const action_ongoing = props.state.action_ongoing;
     const round = props.state.round;
     const players = props.state.players;
@@ -321,50 +358,84 @@ function App() {
     if (action_ongoing === 1) {
 
       counteraction_message = "(pretend that) you have a Daymio, let " + players[round].name + " not take 2 coins!";
+      return (
+        <>
+          <button onClick={() => EmptyCounteraction() }> {counteraction_message} </button>
+        </>
+      )
 
     } else if (action_ongoing === 2) {
 
       counteraction_message = "Check if " + players[round].name + " has Daymio.";
+      return (
+        <>
+          <button onClick={() => OponentChecks(3, round, 'daymio') }> {counteraction_message} </button>
+        </>
+      )
 
     } else if (action_ongoing === 3) {
 
       counteraction_message = "Check if " + players[round].name + " has Samurai";
+      return (
+        <>
+          <button onClick={() => OponentChecks(3, round, 'samurai') }> {counteraction_message} </button>
+        </>
+      )
 
     } else if (action_ongoing === 4) {
 
       counteraction_message = "Check if " + players[round].name + " has Kabuki";
+      return (
+        <>
+          <button onClick={() => OponentChecks(3, round, 'kabuki') }> {counteraction_message} </button>
+        </>
+      )
 
     } else if (action_ongoing === 6) {
 
       counteraction_message = "Check if " + players[round].name + " has Ninja";
+      return (
+        <>
+          <button onClick={() => OponentChecks(3, round, 'ninja') }> {counteraction_message} </button>
+        </>
+      )
 
     } else {
       return '';
     };
+  };
 
-
+  const NewGame = () => {
     return (
       <>
-        <button> {counteraction_message} </button>
+      <button>Start new Game!</button>
       </>
-    )
-};
+      )
 
+  };
+
+  const RenderBoard = () => {
+    return(
+    <>
+      <h1>Round of player: {state.players[state.round].name}</h1>
+      <div className='options'>
+         { state.action_ongoing && state.round != 3 ? RenderCounteraction({state: state}) : ''}
+      </div>
+      <div id='counter'></div>
+      <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
+      <div>
+        <Board />
+      </div>
+      <div className='options'>
+        { state.round === 3 ? RenderPossibleActions({state: state}) : '' }
+      </div>
+    </>
+    )
+  };
 
   return (
   <>
-    <h1>Round of player: {state.players[state.round].name}</h1>
-    <div className='options'>
-       { state.action_ongoing !== false && state.round != 3 ? RenderCounteraction({state: state}) : ''}
-    </div>
-    <div id='counter'></div>
-    <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
-    <div>
-      <Board />
-    </div>
-    <div className='options'>
-      { state.round === 3 ? RenderPossibleActions({state: state}) : '' }
-    </div>
+    { state.players[3].dead ? <NewGame /> : <RenderBoard /> }
   </>
   );
 }
