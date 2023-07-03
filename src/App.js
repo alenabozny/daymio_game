@@ -250,9 +250,9 @@ function App() {
     var oponent_2_dead = players[oponent_id].card_2_dead;
 
     // if the oponent have a {persona}, and the persona is not dead, then the checker dies
-    if ((oponent_1_image === persona && !oponent_1_dead ) 
+    if ((( oponent_1_image === persona ) && !oponent_1_dead ) 
         ||
-        (oponent_2_image === persona && !oponent_2_dead )) 
+        (( oponent_2_image === persona ) && !oponent_2_dead )) 
     {
  
       players = OnePersonaDies(checker_id);
@@ -410,10 +410,10 @@ function App() {
     var deck = state.deck; // deck is a list of all cards available for players
 
     const random_index_1 = Math.floor(Math.random()*deck.length)
-    var persona_1 = deck.splice(random_index_1, 1); // choose random card from deck and remove it (hand it to player)
+    var persona_1 = deck.splice(random_index_1, 1)[0]; // choose random card from deck and remove it (hand it to player)
 
     const random_index_2 = Math.floor(Math.random()*deck.length)
-    var persona_2 = deck.splice(random_index_2, 1); // choose random card from deck and remove it (hand it to player)
+    var persona_2 = deck.splice(random_index_2, 1)[0]; // choose random card from deck and remove it (hand it to player)
 
     players[player_id].card_1_image = persona_1;
     players[player_id].card_2_image = persona_2;
@@ -443,6 +443,7 @@ function App() {
     return(
     <>
       <h1>Round of player: {state.players[state.round].name}</h1>
+      <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
       <h2>Remaining deck: {state.deck.join(' ')}</h2>
       <div className='options'>
          { state.action_ongoing && state.round != 3 ? RenderCounteraction({state: state}) : ''}

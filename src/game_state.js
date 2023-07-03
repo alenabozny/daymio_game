@@ -9,7 +9,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 3,
+        coin_counter: 0,
         message:''
       },
       {
@@ -21,7 +21,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 4,
+        coin_counter: 0,
         message:''
       },
       {
@@ -45,7 +45,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 6,
+        coin_counter: 0,
         message:''
       }],
 
@@ -53,9 +53,9 @@ var game_state = {
   action_ongoing: false,
   game_ongoing: false,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
+         'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
+         'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
          'samurai', 'daymio', 'geisha', 'kabuki', 'ninja']
-         // 'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
-         // 'samurai', 'daymio', 'geisha', 'kabuki', 'ninja']
 
     }; 
 
