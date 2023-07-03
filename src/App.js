@@ -122,7 +122,7 @@ function App() {
       <>
       <h4>Kill as Ninja (for 3 coins) </h4>
       {oponents.map((oponent, id) =>(
-          <button onClick={() => KillAsNinja(oponents, id)}>
+          <button key={id} onClick={() => KillAsNinja(oponents, id)}>
             {oponent.name}
           </button>
         ))}
@@ -152,7 +152,7 @@ function App() {
       <>
       <h4>Steal 2 coins from</h4>
           {oponents.map((oponent, id) =>(
-            oponent.coin_counter >= 2 ? <button onClick={() => Steal2Coins(3, id)}> {oponent.name} </button> : ''
+            oponent.coin_counter >= 2 ? <button key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button> : ''
         ))}
       </>
     )
@@ -405,10 +405,35 @@ function App() {
     };
   };
 
+  const ChooseCardsForPlayer = (player_id) => {
+    var players = state.players;
+    var deck = state.deck; // deck is a list of all cards available for players
+
+    const random_index_1 = Math.floor(Math.random()*deck.length)
+    var persona_1 = deck.splice(random_index_1, 1); // choose random card from deck and remove it (hand it to player)
+
+    const random_index_2 = Math.floor(Math.random()*deck.length)
+    var persona_2 = deck.splice(random_index_2, 1); // choose random card from deck and remove it (hand it to player)
+
+    players[player_id].card_1_image = persona_1;
+    players[player_id].card_2_image = persona_2;
+
+    setGameState({...state, players: players, deck: deck});
+  };
+
+  const StartNextGame = () => {
+    ChooseCardsForPlayer(0);
+    ChooseCardsForPlayer(1);
+    ChooseCardsForPlayer(2);
+    ChooseCardsForPlayer(3);
+
+    setGameState({...state, game_ongoing: true});
+  };
+
   const NewGame = () => {
     return (
       <>
-      <button>Start new Game!</button>
+      <button onClick={() => StartNextGame()}>Start new Game!</button>
       </>
       )
 
@@ -418,6 +443,7 @@ function App() {
     return(
     <>
       <h1>Round of player: {state.players[state.round].name}</h1>
+      <h2>Remaining deck: {state.deck.join(' ')}</h2>
       <div className='options'>
          { state.action_ongoing && state.round != 3 ? RenderCounteraction({state: state}) : ''}
       </div>
@@ -435,7 +461,7 @@ function App() {
 
   return (
   <>
-    { state.players[3].dead ? <NewGame /> : <RenderBoard /> }
+    { state.game_ongoing ? <RenderBoard /> : <NewGame /> }
   </>
   );
 }

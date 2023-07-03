@@ -4,10 +4,10 @@ var game_state = {
       	avatar: "https://placehold.co/125x125",
         name: "Adam",
         email: "ad@shave.pl",
-        card_1_dead: true,
+        card_1_dead: false,
         card_2_dead: false,
-        card_1_image: "kabuki",
-        card_2_image: "geisha",
+        card_1_image: NaN,
+        card_2_image: NaN,
         dead: false,
         coin_counter: 3,
         message:''
@@ -16,10 +16,10 @@ var game_state = {
       	avatar: "https://placehold.co/125x125",
         name: "Ola",
         email: "ad@shave.pl",
-        card_1_dead: true,
+        card_1_dead: false,
         card_2_dead: false,
-        card_1_image: "ninja",
-        card_2_image: "daymio",
+        card_1_image: NaN,
+        card_2_image: NaN,
         dead: false,
         coin_counter: 4,
         message:''
@@ -30,8 +30,8 @@ var game_state = {
         email: "ad@shave.pl",
         card_1_dead: false,
         card_2_dead: false,
-        card_1_image: "daymio",
-        card_2_image: "geisha",
+        card_1_image: NaN,
+        card_2_image: NaN,
         dead: false,
         coin_counter: 0,
         message:''
@@ -41,16 +41,21 @@ var game_state = {
         name: "You",
         email: "ad@shave.pl",
         card_1_dead: false,
-        card_2_dead: true,
-        card_1_image: "samurai",
-        card_2_image: "geisha",
+        card_2_dead: false,
+        card_1_image: NaN,
+        card_2_image: NaN,
         dead: false,
         coin_counter: 6,
         message:''
       }],
 
 	round: 3,
-  action_ongoing: false
+  action_ongoing: false,
+  game_ongoing: false,
+  deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
+         'samurai', 'daymio', 'geisha', 'kabuki', 'ninja']
+         // 'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
+         // 'samurai', 'daymio', 'geisha', 'kabuki', 'ninja']
 
     }; 
 
