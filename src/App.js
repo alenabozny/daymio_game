@@ -53,8 +53,15 @@ function App() {
       formSubmitEvent.preventDefault();
       const regex = "^.*?(?=_)";
 
+      let kabuki_hand_len = Object.keys(props.kabuki_hand).length;
       let new_hand = Object.keys(props.kabuki_hand).filter(card => props.kabuki_hand[card]);
-      if (new_hand.length != 2) { alert("You have to choose exactly two cards!"); return(null); };
+
+      if (kabuki_hand_len === 4) {
+        if (new_hand.length != 2) { alert("You have to choose exactly two cards!"); return(null); };
+      } else {
+        if (new_hand.length != 1) { alert("You have to choose exactly one card!"); return(null); };
+      };
+
 
       new_hand = new_hand.map((card) => card.match(regex)[0]);
 
@@ -62,8 +69,9 @@ function App() {
       not_selected = not_selected.map((card) => card.match(regex)[0]);
 
       let players = state.players;
-      players[3].card_1_image = new_hand[0];
-      players[3].card_2_image = new_hand[1];
+      !players[3].card_1_dead ? players[3].card_1_image = new_hand[0] : players[3].card_2_image = new_hand[0];
+      if (!players[3].card_1_dead && !players[3].card_2_dead) { players[3].card_2_image = new_hand[1] };
+
       let deck = state.deck.concat(not_selected);
 
       setGameState({...state, players: players, 
