@@ -40,8 +40,8 @@ var game_state = {
       	avatar: "https://placehold.co/125x125",
         name: "You",
         email: "ad@shave.pl",
-        card_1_dead: false,
-        card_2_dead: false,
+        card_1_dead: true,
+        card_2_dead: true,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
@@ -51,11 +51,15 @@ var game_state = {
 
 	round: 3,
   action_ongoing: false,
+  kabuki_exchange_ongoing: false,
+  kabuki_hand: {},
   game_ongoing: false,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
          'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
-         'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
-         'samurai', 'daymio', 'geisha', 'kabuki', 'ninja']
+         'samurai', 'daymio', //'geisha', 
+         // 'kabuki', 'ninja',
+         // 'samurai', 'daymio', 'geisha', 'kabuki', 'ninja'
+         ]
 
     }; 
 

@@ -5,115 +5,71 @@ import Player from './player';
 import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
-
-function kabuki_changeCards() {
-
-};
-
-function HasNCoins(player, N) {
-  return player.coin_counter >= N ? true : false ;
-}
-
-function CountDown(props) {
-    // Set the date we're counting down to
-  var counter = props.seconds;
-
-  // Update the count down every 1 second
-  var x = setInterval(function() {
-    document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
-
-    if (counter < 0) {
-        clearInterval(x);
-        document.getElementById("counter").innerHTML = 'Player ' + props.username + ' finished the round.';
-      }
-
-    counter -= 1;
-  }, 1000);
-};
-
-function ChooseAction(props) {
-  var players = props.players;
-  var oponents = [...props.players]; // hard copy the players to later create the oponents list
-  const current_player_id = props.newround;
-  const random_number = Math.random();
-
-  var action_id = 0;
-
-  // 0 is for taking 1 coin
-  // 1 is for taking 2 coins
-  // 2 is for taking 3 coins
-  // 3 is for stealing 2 coins
-  // 4 is for changing cards
-  // 5 is for killing for 7 coins
-  // 6 is for killing for 3 coins
-
-  var message = ['',''];
-
-  oponents.splice(current_player_id, 1); // remove current player from the oponents list
-  const oponent = oponents[Math.floor(Math.random()*oponents.length)]; // randomly choose an oponent for the current player
-
-  if (random_number<(1/7)) {
-    // player wants to take 1 coin from the bank
-    action_id = 0;
-    message[0] = "I'm gonna take 1 coin from the bank.";
-    message[1] = "I just took 1 coin from the bank.";
-    players[current_player_id] = {...players[current_player_id], 
-                                  coin_counter: players[current_player_id].coin_counter += 1}
-
-  } else if (random_number<(2/7)) {
-    // player wants to take 2 coins from the bank
-    action_id = 1;
-    message[0] = "I'm gonna take 2 coins from the bank.";
-    message[1] = "I just took 2 coins from the bank.";
-    players[current_player_id] = {...players[current_player_id], 
-                                  coin_counter: players[current_player_id].coin_counter += 2}  
-  } else if (random_number<(3/7)) {
-    // player wants to take 3 coins from the bank -!!!- DAYMIO -!!!-
-    action_id = 2;
-    message[0] = "I'm gonna use Daymio superpowers and take 3 coins from the bank.";
-    message[1] = "I just took 3 coins from the bank.";
-    players[current_player_id] = {...players[current_player_id], 
-                                  coin_counter: players[current_player_id].coin_counter += 3}  
-    } else if (random_number<(4/7)) {
-    // player wants to steal 2 coins from ... -!!!- SAMURAI -!!!-
-    action_id = 3;
-    message[0] = "I'm gonna take 2 coins from the bank.";
-    message[1] = 'I just stole 2 coins from' + oponent.name +'.';
-    players[current_player_id] = {...players[current_player_id], 
-                                  coin_counter: players[current_player_id].coin_counter += 2}
-    // TODO: -= 2 for the oponent
-
-  }  else if (random_number<(5/7)) {
-    // player wants to change the cards -!!!- KABUKI -!!!-
-    action_id = 4;
-    message[0] = "I'm gonna user KABUKI superpowers and change my cards.";
-    message[1] = "I just changed my cards!";
-    // TODO: change cards for the current player; remaining: create the deck
-
-  } else if (random_number<(6/7)) {
-    // player wants to kill ... for 7 coins
-    action_id = 5;
-    message[0] = "I'm gonna kill " + oponent.name + " for 7 coins";
-    message[1] = "I just killed " + oponent.name + "!";
-    // TODO: Check if the current player has 7 coins, kill the oponent
-
-  } else {
-    // player wants to kill for 3 coins -!!!- NINJA -!!!-
-    action_id = 6;
-    message[0] = "I'm gonna use NINJA superpowers and kill " + oponent.name + " for 3 coins";
-    message[1] = "I just killed " + oponent.name + "!";
-    // TODO: Check if the current player has 3 coins, attempt to kill the oponent
-  };
-
-  return({action_id: action_id,
-          initial_message: message[0],
-          postround_message: message[1],
-          players: players});
-};
-
+import Checkbox from './checkbox.js';
+import ChooseAction from './choose_action.js';
+import HasNCoins from './has_n_coins.js';
+import CountDown from './count_down.js';
+import ShowCardsForKabukiExchange from './show_cards_for_kabuki_exchange.js';
 
 function App() {
   const [state, setGameState] = useState(game_state);
+
+  const ToggleKabukiExchangeOn = () => {
+    setGameState({...state, kabuki_exchange_ongoing: !state.kabuki_exchange_ongoing,
+                            kabuki_hand: ShowCardsForKabukiExchange({deck: state.deck,
+                                                                     player: state.players[3]
+                                                                    })
+                 })
+  };
+
+  const KabukiChangeCards = (props) => {
+
+    const CreateKabukiCheckbox = card => (
+      <Checkbox
+        label={card}
+        isSelected={state.kabuki_hand[card]}
+        onCheckboxChange={handleKabukiCheckboxChange}
+        key={card}
+      />
+    );
+
+    const CreateCheckboxesForKabuki = () => {
+      return(
+        <>
+         {Object.keys(props.kabuki_hand).map((card) => CreateKabukiCheckbox(card))}
+        </>
+        )
+    };
+
+    const handleKabukiCheckboxChange = changeEvent => {
+      const { name } = changeEvent.target;
+      var kabuki_hand = state.kabuki_hand;
+      kabuki_hand[name] = !state.kabuki_hand[name];
+
+      setGameState({...state, kabuki_hand: kabuki_hand });
+    };
+
+    const handleKabukiCheckboxesSubmit = formSubmitEvent => {
+      formSubmitEvent.preventDefault();
+
+      Object.keys(props.kabuki_hand)
+        .filter(card => props.kabuki_hand[card])
+        .forEach(card => {
+          console.log(card, "is selected.");
+        });
+    };
+
+    return(
+      <>
+        <form onSubmit={handleKabukiCheckboxesSubmit}>
+          <CreateCheckboxesForKabuki />
+          <button type="submit">
+            Save my Choices
+          </button>
+        </form>
+      </>
+      )
+  };
 
   const KillFor3Buttons = props => {
     let oponents = props.oponents;
@@ -325,7 +281,8 @@ function App() {
         { HasNCoins(players[3], 9) ? '' : <button onClick={() => TakeNCoins(2) } > Take two coins from the bank.</button> }
         { HasNCoins(players[3], 8) ? '' : <button onClick={() => TakeNCoins(3) } >(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
 
-        <button onClick={() => kabuki_changeCards()}>(Pretend that) you have a Kabuki, change your cards.</button>
+        <button onClick={ToggleKabukiExchangeOn}>(Pretend that) you have a Kabuki, change your cards.
+        </button>
         
         { HasNCoins(players[3],8) ? '' : <Steal2CoinsButtons oponents={oponents} />}
         { HasNCoins(players[3], 3) ? <KillFor3Buttons oponents={oponents} /> : ''}
@@ -413,7 +370,7 @@ function App() {
     var persona_1 = deck.splice(random_index_1, 1)[0]; // choose random card from deck and remove it (hand it to player)
 
     const random_index_2 = Math.floor(Math.random()*deck.length)
-    var persona_2 = deck.splice(random_index_2, 1)[0]; // choose random card from deck and remove it (hand it to player)
+    var persona_2 = deck.splice(random_index_2, 1)[0]; // choose another random card from deck and hand it to player)
 
     players[player_id].card_1_image = persona_1;
     players[player_id].card_2_image = persona_2;
@@ -453,6 +410,10 @@ function App() {
       <div>
         <Board />
       </div>
+
+        {state.kabuki_exchange_ongoing && 
+            <KabukiChangeCards kabuki_hand = { state.kabuki_hand } />}
+
       <div className='options'>
         { state.round === 3 ? RenderPossibleActions({state: state}) : '' }
       </div>
