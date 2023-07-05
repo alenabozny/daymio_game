@@ -184,6 +184,7 @@ function App() {
       if (player_id ===3) {
 
         alert("Sorry, you are out of the game. You can start a new one.");
+        setGameState(game_state);
       }
       setGameState({...state, players: players}); 
     };
@@ -320,6 +321,15 @@ function App() {
     console.log("dupa")
   };
 
+  const DaymioPreventsTaking2Coins = (player_id) => {
+    var players = state.players
+    let player_checks = Math.random() > 0.5;
+
+    player_checks ? OponentChecks(player_id, 3, 'daymio') : players[player_id].coin_counter -= 2;
+
+    StartNextRound();
+  };
+
   const RenderCounteraction = (props) => {
 
     let counteraction_message = '';
@@ -341,7 +351,7 @@ function App() {
       counteraction_message = "(pretend that) you have a Daymio, let " + players[round].name + " not take 2 coins!";
       return (
         <>
-          <button onClick={() => EmptyCounteraction() }> {counteraction_message} </button>
+          <button onClick={() => DaymioPreventsTaking2Coins(round) }> {counteraction_message} </button>
         </>
       )
 
