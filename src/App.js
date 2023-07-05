@@ -36,7 +36,7 @@ function App() {
     const CreateCheckboxesForKabuki = () => {
       return(
         <>
-         {Object.keys(props.kabuki_hand).map((card) => CreateKabukiCheckbox(card))}
+         { Object.keys(props.kabuki_hand).map((card) => CreateKabukiCheckbox(card)) }
         </>
         )
     };
@@ -54,21 +54,17 @@ function App() {
       const regex = "^.*?(?=_)";
 
       let new_hand = Object.keys(props.kabuki_hand).filter(card => props.kabuki_hand[card]);
+      if (new_hand.length != 2) { alert("You have to choose exactly two cards!"); return(null); };
+
       new_hand = new_hand.map((card) => card.match(regex)[0]);
 
       let not_selected = Object.keys(props.kabuki_hand).filter(card => !props.kabuki_hand[card]);
       not_selected = not_selected.map((card) => card.match(regex)[0]);
 
-      console.log(not_selected + ' were not selected');
-
       let players = state.players;
       players[3].card_1_image = new_hand[0];
       players[3].card_2_image = new_hand[1];
       let deck = state.deck.concat(not_selected);
-
-      console.log(players[3]);
-      console.log('New deck: ' + deck);
-      console.log('New cards for player YOU: ' + new_hand);
 
       setGameState({...state, players: players, 
                               deck: deck, 
