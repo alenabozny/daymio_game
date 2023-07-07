@@ -20,7 +20,7 @@ var game_state = {
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
-        dead: false,
+        dead: true,
         coin_counter: 0,
         message:''
       },
@@ -50,6 +50,7 @@ var game_state = {
       }],
 
 	round: 3,
+  oponent_id: null,
   action_ongoing: false,
   kabuki_exchange_ongoing: false,
   kabuki_hand: {},

@@ -400,7 +400,7 @@ function App() {
       // 5 is for killing for 7 coins
       // 6 is for killing for 3 coins
 
-    if (action_ongoing === 1) {
+    if (action_ongoing === '1') {
 
       counteraction_message = "(pretend that) you have a Daymio, let " + players[round].name + " not take 2 coins!";
       return (
@@ -409,7 +409,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === 2) {
+    } else if (action_ongoing === '2') {
 
       counteraction_message = "Check if " + players[round].name + " has Daymio.";
       return (
@@ -418,7 +418,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === 3) {
+    } else if (action_ongoing === '3') {
 
       counteraction_message = "Check if " + players[round].name + " has Samurai";
       return (
@@ -427,7 +427,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === 4) {
+    } else if (action_ongoing === '4') {
 
       counteraction_message = "Check if " + players[round].name + " has Kabuki";
       return (
@@ -436,7 +436,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === 6) {
+    } else if (action_ongoing === '6') {
       return (
         <>
           <button onClick={ToggleGeishaModal}> 
@@ -500,7 +500,7 @@ function App() {
       <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
       <h2>Remaining deck: {state.deck.join(' ')}</h2>
       <div className='options'>
-         { state.action_ongoing && state.round != 3 ? RenderCounteraction({state: state}) : ''}
+         { ((state.action_ongoing != false) && (state.round != 3)) ? RenderCounteraction({state: state}) : console.log('dupa')}
       </div>
       <div id='counter'></div>
       <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
