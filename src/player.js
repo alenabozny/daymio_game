@@ -10,7 +10,7 @@ const personaImages = {"ninja": "https://freesvg.org/img/Ninja-Head.png",
   };
 
 function Player(props) {
-    console.log(props.message);
+    // console.log(props.message);
 
     return(
       <div className={'player-card ' + props.dead} >

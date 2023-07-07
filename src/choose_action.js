@@ -24,41 +24,57 @@ const ACTIONS = {0: ["I'm gonna take 1 coin from the bank.",
                      "As NINJA, I just killed "]
                };
 
-function PossibleActions(player) {
+function RandomOponentId(props) {
+  var oponent_ids = [];
+  var players = [...props.players];
+  // if the action is Samurai attack, we have to check if the potential oponent has at least 2 coins to steal from
+  var samurai_attack_impossible = (players[props.current_player_id].coin_counter <= 2) && (props.action_id === 3);
+
+  // chose all oponents that are not the current player and are not dead
+  oponent_ids = players.map(
+                  (player, id) => { 
+                    return (id === props.current_player_id) || player.dead || samurai_attack_impossible ? -1 : id
+                  }).filter( j => j != -1 );
+
+  console.log("Oponent ids: " + oponent_ids);
+
+  var random_oponent_id = oponent_ids[Math.floor(Math.random()*oponent_ids.length)];
+
+  console.log("Oponent: " + players[random_oponent_id].name);
+
+  return random_oponent_id;
+}
+
+function PossibleActions(props) {
   var possible_actions = Object.keys(ACTIONS);
+  var player = props.player;
 
   player.coin_counter < 3 && possible_actions.splice(6, 1);
   player.coin_counter < 7 && possible_actions.splice(5, 1);
+
+  // check if we can steal from anybody in the game
+  var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2).filter(player => !player.dead);
+  if (players_from_whom_we_can_steal.length === 0) { possible_actions.splice(3, 1); }
 
   return possible_actions
 }
 
 function ChooseAction(props) {
   var players = props.players;
-  var oponents = [...props.players]; // hard copy the players to later create the oponents list
   const current_player_id = props.newround;
   const random_number = Math.random();
 
   var action_id = 0;
-  var possible_actions = PossibleActions(players[current_player_id]);
+  var possible_actions = PossibleActions({players: players, player: players[current_player_id]});
   console.log("Possible Actions: " + possible_actions);
 
-  var message = ['',''];
   const num_actions = possible_actions.length;
 
-  // oponents.splice(current_player_id, 1); // remove current player from the oponents list
-  // const oponent = oponents[Math.floor(Math.random()*oponents.length)]; // randomly choose an oponent for the current player
-  var oponent_ids = [];
-  var players_copy = [...props.players];
-
-  oponent_ids = players_copy.map(
-                  (player, id) => { 
-                    return (id === current_player_id) || player.dead ? -1 : id
-                  }).filter( j => j != -1 );
-
-  var random_oponent_id = Math.floor(Math.random()*oponent_ids.length);
-
   var action_id = possible_actions[Math.floor(Math.random()*num_actions)];
+
+  var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, current_player_id: current_player_id}) : null ;
+
+
 
   return({action_id: action_id,
           initial_message: ACTIONS[action_id][0],

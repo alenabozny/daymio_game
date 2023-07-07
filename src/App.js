@@ -24,7 +24,6 @@ function App() {
   };
 
   const ToggleGeishaModal = () => {
-    console.log("GEISHA ACTIVATED");
     setGameState({...state, geisha_modal: true});
   };
 
@@ -309,6 +308,7 @@ function App() {
   const StartNextRound = () => {
     const newround = (state.round + 1) % 4;
     const players = state.players;
+    // TODO do not start the game if player is dead!
     const seconds = 4;
 
     if (players[3].dead) { // if you lost the game
@@ -328,19 +328,28 @@ function App() {
       var next_action = ChooseAction({newround: newround,
                                        players: players});
 
-      players[newround].message = next_action.initial_message;
+      var oponent = null;
+      var oponent_name = '';
+      if ( next_action.oponent_id != null ) 
+        { oponent = players[next_action.oponent_id]; 
+          oponent_name = oponent.name 
+        };
+
+      players[newround].message = next_action.initial_message + oponent_name;
       setGameState(previousState => {
-        return { ...previousState, round: newround, action_ongoing: next_action.action_id }
+        return { ...previousState, round: newround, 
+                                   action_ongoing: next_action.action_id,
+                                   oponent_id: next_action.oponent_id }
       });
 
       CountDown({seconds: seconds,
                  username: players[newround].name});
         
       const timeout = setTimeout(() => {
-        players[newround].message = next_action.postround_message;
+        players[newround].message = next_action.postround_message + oponent_name;
         // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
         setGameState(previousState => {
-          return { ...previousState, players: players, action_ongoing: false }
+          return { ...previousState, players: players, action_ongoing: false, oponent_id: null }
         });
       }, (seconds+1) * 1000);
     };
@@ -436,7 +445,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === '6') {
+    } else if (action_ongoing === '6' && props.state.oponent_id === 3) {
       return (
         <>
           <button onClick={ToggleGeishaModal}> 
@@ -500,7 +509,7 @@ function App() {
       <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
       <h2>Remaining deck: {state.deck.join(' ')}</h2>
       <div className='options'>
-         { ((state.action_ongoing != false) && (state.round != 3)) ? RenderCounteraction({state: state}) : console.log('dupa')}
+         { ((state.action_ongoing != false) && (state.round != 3)) && RenderCounteraction({state: state}) }
       </div>
       <div id='counter'></div>
       <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
