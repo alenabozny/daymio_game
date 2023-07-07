@@ -53,6 +53,7 @@ var game_state = {
   action_ongoing: false,
   kabuki_exchange_ongoing: false,
   kabuki_hand: {},
+  geisha_modal: false,
   game_ongoing: false,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
          'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',

@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import "./styles.css";
 import Player from './player';
+import Modal from './modal';
 import Board from './board.js';
 import React, { useState } from "react";
 import game_state from './game_state.js';
@@ -20,6 +21,11 @@ function App() {
                                                                      player: state.players[3]
                                                                     })
                  })
+  };
+
+  const ToggleGeishaModal = () => {
+    console.log("GEISHA ACTIVATED");
+    setGameState({...state, geisha_modal: true});
   };
 
   const KabukiChangeCards = (props) => {
@@ -211,11 +217,53 @@ function App() {
     StartNextRound();
   }
 
-  const KillAsNinja = (oponents, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.5 ? true : false;
+  const handleNoAction = () => {
+      OnePersonaDies(3);
+      alert('You die as a result of a ninja attack!');
+      setGameState({...state, geisha_modal: false});
+      StartNextRound();
+  };
+
+  const handleProtectAction = (oponent_id) => {
+    const oponent_checks = Math.random() > 0.5 ? true : false;
+    setGameState({...state, geisha_modal: false});
     var new_game_state = state;
 
-    do_oponent_check ? new_game_state = OponentChecks(oponent_id, 3, 'ninja') : kill(oponents, oponent_id, 3);
+    if (oponent_checks) { 
+      new_game_state = OponentChecks(oponent_id, 3, 'geisha'); 
+      setGameState({...new_game_state, geisha_modal: false});
+      StartNextRound();
+    } else {
+      setGameState({...state, geisha_modal: false});
+      alert('The ninja attact was defeated!')
+      StartNextRound();
+    }
+  }
+
+  const handleCheckingAction = (oponent_id) => {
+    var new_game_state = OponentChecks(3, oponent_id, 'ninja');
+
+    setGameState({...new_game_state, geisha_modal: false});
+    StartNextRound();
+  };
+
+  const KillAsNinja = (oponents, oponent_id) => {
+    const oponent_checks = Math.random() > 0.5 ? true : false;
+    const oponent_uses_geisha = Math.random() > 0.5 ? true : false;
+    var new_game_state = state;
+
+    if (oponent_checks) {
+      
+        new_game_state = OponentChecks(oponent_id, 3, 'ninja'); 
+        setGameState(new_game_state);
+
+      } else if (oponent_uses_geisha) {
+
+        alert(state.players[oponent_id].name + ' uses Geisha to protect him/herself. Do you want to check ' + state.players[oponent_id].name + ' ?' );
+
+      };
+
+    kill(oponents, oponent_id, 3);
 
     setGameState(new_game_state);
     StartNextRound();
@@ -383,11 +431,11 @@ function App() {
       )
 
     } else if (action_ongoing === 6) {
-
-      counteraction_message = "Check if " + players[round].name + " has Ninja";
       return (
         <>
-          <button onClick={() => OponentChecks(3, round, 'ninja') }> {counteraction_message} </button>
+          <button onClick={ToggleGeishaModal}> 
+            'See your options for a ninja attack'
+          </button>
         </>
       )
 
@@ -433,6 +481,15 @@ function App() {
   const RenderBoard = () => {
     return(
     <>
+
+      { state.geisha_modal &&  
+        <Modal handleProtectAction = { () => handleProtectAction(state.round) } 
+               handleNoAction = { handleNoAction }
+               handleCheckingAction = { () => handleCheckingAction(state.round) }
+               show = { state.geisha_modal }
+               children = { <p> What do you want to do? </p> } />
+      }
+
       <h1>Round of player: {state.players[state.round].name}</h1>
       <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
       <h2>Remaining deck: {state.deck.join(' ')}</h2>
