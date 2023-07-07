@@ -305,6 +305,47 @@ function App() {
     return new_game_state;
   };
 
+  const updateGameState = (action_id, players, player_id, oponent_id) => {
+    var players = [...players];
+    var player = players[player_id];
+    var oponent = players[oponent_id];
+
+    if (action_id === '0') {
+      // taking 1 coin from the bank
+      player.coin_counter += 1;
+
+    } else if (action_id === '1') {
+      // taking 2 coins from the bank
+      player.coin_counter += 2;
+
+    } else if (action_id === '2') {
+      // taking 3 coins from the bank
+      player.coin_counter += 3;
+
+    } else if (action_id === '3') {
+      // stealing 2 coins
+      player.coin_counter += 2;
+      oponent.coin_counter -= 2;
+
+    } else if (action_id === '4') {
+      // KABUKI exchange ; do nothing for now
+
+    } else if (action_id === '5') {
+      // 7 coins kill
+      var players_after_kill = OnePersonaDies(oponent_id);
+      players = [...players_after_kill];
+      players[player_id].coin_counter -= 7;
+
+    } else {
+      // NINJA kill
+      var players_after_kill = OnePersonaDies(oponent_id);
+      players = [...players_after_kill];
+      players[player_id].coin_counter -= 3;
+    };
+
+    return {...state, players: players, action_ongoing: false, oponent_id: null, round: player_id};
+  };
+
   const StartNextRound = () => {
     const newround = (state.round + 1) % 4;
     const players = state.players;
@@ -325,33 +366,46 @@ function App() {
 
     } else { // if the round belongs to an oponent
 
-      var next_action = ChooseAction({newround: newround,
+      var action = ChooseAction({newround: newround,
                                        players: players});
 
       var oponent = null;
       var oponent_name = '';
-      if ( next_action.oponent_id != null ) 
-        { oponent = players[next_action.oponent_id]; 
+      if ( action.oponent_id != null ) 
+        { oponent = players[action.oponent_id]; 
           oponent_name = oponent.name 
         };
 
-      players[newround].message = next_action.initial_message + oponent_name;
-      setGameState(previousState => {
-        return { ...previousState, round: newround, 
-                                   action_ongoing: next_action.action_id,
-                                   oponent_id: next_action.oponent_id }
-      });
+      players[newround].message = action.initial_message + oponent_name;
+      setGameState({ ...state, round: newround, 
+                         action_ongoing: action.action_id,
+                         oponent_id: action.oponent_id });
 
-      CountDown({seconds: seconds,
-                 username: players[newround].name});
+      // CountDown({seconds: seconds,
+      //            username: players[newround].name});
+
+      var counter = 5;
+      var x = setInterval(function() {
+        document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
+
+        if (counter < 0) {
+            clearInterval(x);
+            document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
+            var new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
+            setGameState({ ...new_game_state});
+          }
+
+        counter -= 1;
+      }, 1000);
         
-      const timeout = setTimeout(() => {
-        players[newround].message = next_action.postround_message + oponent_name;
-        // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
-        setGameState(previousState => {
-          return { ...previousState, players: players, action_ongoing: false, oponent_id: null }
-        });
-      }, (seconds+1) * 1000);
+      // const timeout = setTimeout(() => {
+      //   players[newround].message = action.postround_message + oponent_name;
+      //   // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
+      //   setGameState({ ...new_game_state, players: players, 
+      //                                     round: newround,
+      //                                     action_ongoing: false, 
+      //                                     oponent_id: null });
+      // }, (seconds+1) * 1000);
     };
   };
 
@@ -362,7 +416,6 @@ function App() {
   oponents.splice(3, 1);
 
   return (
-  /* passing the function to onClick instead of calling it */
       <>
         <br />
         { HasNCoins(players[3], 10) ? '' : <button onClick={() => TakeNCoins(1) } > Take one coin from the bank.</button> }
@@ -427,7 +480,7 @@ function App() {
         </>
       )
 
-    } else if (action_ongoing === '3') {
+    } else if (action_ongoing === '3' && props.state.oponent_id === 3) {
 
       counteraction_message = "Check if " + players[round].name + " has Samurai";
       return (
