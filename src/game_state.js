@@ -54,6 +54,8 @@ var game_state = {
   action_ongoing: false,
   kabuki_exchange_ongoing: false,
   kabuki_hand: {},
+  // TODO: implement who_lost_check to decide whether to reverse the action, or to proceed
+  lost_check: null,
   geisha_modal: false,
   game_ongoing: false,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',

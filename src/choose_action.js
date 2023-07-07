@@ -28,7 +28,7 @@ function RandomOponentId(props) {
   var oponent_ids = [];
   var players = [...props.players];
   // if the action is Samurai attack, we have to check if the potential oponent has at least 2 coins to steal from
-  var samurai_attack_impossible = (players[props.current_player_id].coin_counter <= 2) && (props.action_id === 3);
+  var samurai_attack_impossible = (players[props.current_player_id].coin_counter < 2) && (props.action_id === 3);
 
   // chose all oponents that are not the current player and are not dead
   oponent_ids = players.map(

@@ -260,9 +260,9 @@ function App() {
 
         alert(state.players[oponent_id].name + ' uses Geisha to protect him/herself. Do you want to check ' + state.players[oponent_id].name + ' ?' );
 
+      } else {
+        kill(oponents, oponent_id, 3);
       };
-
-    kill(oponents, oponent_id, 3);
 
     setGameState(new_game_state);
     StartNextRound();
@@ -285,14 +285,14 @@ function App() {
  
       players = OnePersonaDies(checker_id);
       alert(players[checker_id].name + ' dies, because of the lost checking action.');
-      new_game_state = {...state, players: players};
+      new_game_state = {...state, players: players, lost_check: checker_id};
 
     // if don't... then the oponent dies
     } else {
 
       players = OnePersonaDies(oponent_id);
       alert(players[oponent_id].name + ' dies, because of the lost checking action.');
-      new_game_state = {...state, players: players};
+      new_game_state = {...state, players: players, lost_check: oponent_id};
 
       // if it is a Geisha check, the oponent dies with both personas
       if (persona === 'geisha') { 
@@ -347,14 +347,22 @@ function App() {
   };
 
   const StartNextRound = () => {
-    const newround = (state.round + 1) % 4;
     const players = state.players;
-    // TODO do not start the game if player is dead!
-    const seconds = 4;
+    var newround = (state.round + 1) % 4;
+
+    while ( players[newround].dead ) {
+      if (players[newround] === state.round) {
+        alert("You won the game!");
+      };
+      newround = (newround + 1) % 4;
+    }
+    // do not start the game if player is dead!
+    
+    var counter = 1;
 
     if (players[3].dead) { // if you lost the game
 
-      return ( "" );
+      return ( "" ); // TODO
 
     } else if (newround == 3) { // if the round belongs to the active user (YOU)
 
@@ -384,28 +392,22 @@ function App() {
       // CountDown({seconds: seconds,
       //            username: players[newround].name});
 
-      var counter = 5;
       var x = setInterval(function() {
         document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
 
-        if (counter < 0) {
+        if ((counter < 0) && !state.geisha_modal) { // TODO: additional condition to stop counting if user performs counteraction
             clearInterval(x);
             document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
+
             var new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
-            setGameState({ ...new_game_state});
+            var new_players = [...new_game_state.players];
+            new_players[newround].message = action.postround_message + oponent_name;
+
+            setGameState({ ...new_game_state, players: players});
           }
 
         counter -= 1;
       }, 1000);
-        
-      // const timeout = setTimeout(() => {
-      //   players[newround].message = action.postround_message + oponent_name;
-      //   // TODO: UPDATE THE START_NEXT_ROUND FUNCTION TO UPDATE PARAMS AS COIN COUNTER AFTER THE TIMEOUT
-      //   setGameState({ ...new_game_state, players: players, 
-      //                                     round: newround,
-      //                                     action_ongoing: false, 
-      //                                     oponent_id: null });
-      // }, (seconds+1) * 1000);
     };
   };
 
@@ -433,9 +435,6 @@ function App() {
     )
   };
 
-  const EmptyCounteraction = () => {
-    console.log("dupa")
-  };
 
   const DaymioPreventsTaking2Coins = (player_id) => {
     var players = state.players
@@ -446,10 +445,20 @@ function App() {
     StartNextRound();
   };
 
+  const CheckDaymioWhenPlayerTakes3Coins = () => {
+    var new_game_state = OponentChecks(3, state.round, 'daymio');
+    var players = [...new_game_state.players];
+    if (new_game_state.lost_check === state.round) {
+      new_game_state.players[state.round].coin_counter -= 3;
+    };
+
+    setGameState({...new_game_state});
+  };
+
+
   const RenderCounteraction = (props) => {
 
     let counteraction_message = '';
-    let on_click_counteraction = EmptyCounteraction;
     const action_ongoing = props.state.action_ongoing;
     const round = props.state.round;
     const players = props.state.players;
@@ -476,7 +485,7 @@ function App() {
       counteraction_message = "Check if " + players[round].name + " has Daymio.";
       return (
         <>
-          <button onClick={() => OponentChecks(3, round, 'daymio') }> {counteraction_message} </button>
+          <button onClick={ CheckDaymioWhenPlayerTakes3Coins }> {counteraction_message} </button>
         </>
       )
 
