@@ -51,11 +51,10 @@ function PossibleActions(props) {
 
   player.coin_counter < 3 && possible_actions.splice(6, 1);
   player.coin_counter < 7 && possible_actions.splice(5, 1);
-  if (player.coin_counter > 9) { possible_actions.splice(0,1);
-                                 possible_actions.splice(1,1); 
-                                 possible_actions.splice(2,1); 
-                                 possible_actions.splice(3,1)};
-
+  player.coin_counter > 9 && possible_actions.splice(0, 1);
+  if (player.coin_counter > 8) { possible_actions.splice(1,1); possible_actions.splice(3,1) };
+  player.coin_counter > 7 && possible_actions.splice(2,1); 
+                                 
   // check if we can steal from anybody in the game
   var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2).filter(player => !player.dead);
   if (players_from_whom_we_can_steal.length === 0) { possible_actions.splice(3, 1); }
