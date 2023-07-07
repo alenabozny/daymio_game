@@ -218,7 +218,6 @@ function App() {
   }
 
   const handleNoAction = () => {
-      OnePersonaDies(3);
       alert('You die as a result of a ninja attack!');
       setGameState({...state, geisha_modal: false});
       StartNextRound();
@@ -230,7 +229,8 @@ function App() {
     var new_game_state = state;
 
     if (oponent_checks) { 
-      new_game_state = OponentChecks(oponent_id, 3, 'geisha'); 
+      new_game_state = OponentChecks(oponent_id, 3, 'geisha'); // you can loose the checking action with one persona
+      OnePersonaDies(3); // and then die out of ninja attack with the other
       setGameState({...new_game_state, geisha_modal: false});
       StartNextRound();
     } else {
@@ -294,6 +294,12 @@ function App() {
       players = OnePersonaDies(oponent_id);
       alert(players[oponent_id].name + ' dies, because of the lost checking action.');
       new_game_state = {...state, players: players};
+
+      // if it is a Geisha check, the oponent dies with both personas
+      if (persona === 'geisha') { 
+        alert('Sorry, you are out of the game because of the lost checking action and the ninja attack');
+        OnePersonaDies(oponent_id) 
+      }
 
     };
 
