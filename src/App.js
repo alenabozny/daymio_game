@@ -82,7 +82,7 @@ function App() {
       setGameState({...state, players: players, 
                               deck: deck, 
                               kabuki_hand: {}, 
-                              kabuki_exchange_ongoing: !state.kabuki_exchange_ongoing
+                              kabuki_exchange_ongoing: false
                     });
 
       StartNextRound();
@@ -218,6 +218,7 @@ function App() {
 
   const handleNoAction = () => {
       alert('You die as a result of a ninja attack!');
+      OnePersonaDies(3);
       setGameState({...state, geisha_modal: false});
       StartNextRound();
   };
@@ -229,7 +230,7 @@ function App() {
 
     if (oponent_checks) { 
       new_game_state = OponentChecks(oponent_id, 3, 'geisha'); // you can loose the checking action with one persona
-      OnePersonaDies(3); // and then die out of ninja attack with the other
+      OnePersonaDies(new_game_state.lost_check); // and then die out of ninja attack with the other
       setGameState({...new_game_state, geisha_modal: false});
       StartNextRound();
     } else {
@@ -385,18 +386,12 @@ function App() {
         };
 
       players[newround].message = action.initial_message + oponent_name;
-      setGameState({ ...state, round: newround, 
-                         action_ongoing: action.action_id,
-                         oponent_id: action.oponent_id });
 
-      // CountDown({seconds: seconds,
-      //            username: players[newround].name});
-
-      var x = setInterval(function() {
+      var interval_id = setInterval(function() {
         document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
 
         if ((counter < 0) && !state.geisha_modal) { // TODO: additional condition to stop counting if user performs counteraction
-            clearInterval(x);
+            clearInterval(interval_id);
             document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
 
             var new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
@@ -408,6 +403,12 @@ function App() {
 
         counter -= 1;
       }, 1000);
+
+      setGameState({ ...state, round: newround, 
+                   action_ongoing: action.action_id,
+                   oponent_id: action.oponent_id,
+                   interval_id: interval_id });
+
     };
   };
 
@@ -510,7 +511,7 @@ function App() {
     } else if (action_ongoing === '6' && props.state.oponent_id === 3) {
       return (
         <>
-          <button onClick={ToggleGeishaModal}> 
+          <button onClick={() => { ToggleGeishaModal(); clearInterval(state.interval_id) }}> 
             'See your options for a ninja attack'
           </button>
         </>

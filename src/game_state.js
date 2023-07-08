@@ -58,6 +58,7 @@ var game_state = {
   lost_check: null,
   geisha_modal: false,
   game_ongoing: false,
+  interval_id: null,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
          'samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
          'samurai', 'daymio', //'geisha', 

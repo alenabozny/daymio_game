@@ -27,13 +27,20 @@ const ACTIONS = {0: ["I'm gonna take 1 coin from the bank.",
 function RandomOponentId(props) {
   var oponent_ids = [];
   var players = [...props.players];
-  // if the action is Samurai attack, we have to check if the potential oponent has at least 2 coins to steal from
-  var samurai_attack_impossible = (players[props.current_player_id].coin_counter < 2) && (props.action_id === 3);
 
-  // chose all oponents that are not the current player and are not dead
   oponent_ids = players.map(
                   (player, id) => { 
-                    return (id === props.current_player_id) || player.dead || samurai_attack_impossible ? -1 : id
+
+                    // chose all oponents that are not the current player and are not dead
+
+                    if ((id === props.current_player_id) || player.dead) {
+                         return (-1); 
+
+                    // if the action is Samurai attack, we have to check if the potential oponent has at least 2 coins to steal from
+
+                    } else if ((player.coin_counter < 2) && (props.action_id === '3')) {
+                         return (-1);
+                    } else { return (id); };
                   }).filter( j => j != -1 );
 
   console.log("Oponent ids: " + oponent_ids);
@@ -75,7 +82,9 @@ function ChooseAction(props) {
 
   var action_id = possible_actions[Math.floor(Math.random()*num_actions)];
 
-  var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, current_player_id: current_player_id}) : null ;
+  var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, 
+                                                                                  current_player_id: current_player_id,
+                                                                                  action_id: action_id}) : null ;
 
 
 
