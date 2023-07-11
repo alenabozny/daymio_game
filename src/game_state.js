@@ -61,6 +61,8 @@ var game_state = {
   taking_2_coins_count: 0,
   ninja_attack_count: 0,
 
+  next_game_start: false,
+
   lost_check: null,
 
   geisha_modal: false,

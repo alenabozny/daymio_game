@@ -18,6 +18,7 @@ function App() {
   useEffect(()=>{ state.defeated_geisha_attact_count > 0 && StartNextRound() }, [state.defeated_geisha_attact_count]); 
   useEffect(()=>{ state.taking_2_coins_count > 0 && StartNextRound() }, [state.taking_2_coins_count]);  
   useEffect(()=>{ state.ninja_attack_count > 0 && StartNextRound() }, [state.ninja_attack_count]);
+  useEffect(()=>{ state.next_game_start && StartNextGame() }, [state.next_game_start])
 
   const ToggleKabukiExchangeOn = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
@@ -26,21 +27,24 @@ function App() {
 
     var new_game_state = {...state};
     var do_oponent_check = Math.random() > 0.5 ? true : false;
-    if(!do_oponent_check) {
 
-      new_game_state = {...state, kabuki_exchange_ongoing: true,
-                                  kabuki_hand: ShowCardsForKabukiExchange({deck: state.deck,
-                                                                           player: state.players[3]
-                                                                    })} 
-    } else {
+    if(do_oponent_check) {
 
-      new_game_state = {...OponentChecks(random_oponent_id, 3, 'kabuki'), 
-                                kabuki_exchange_ongoing: false,};
-      setGameState(new_game_state);
-      StartNextRound();
-      return('');
-    }
+      new_game_state = OponentChecks(random_oponent_id, 3, 'kabuki');
 
+      // if oponent lost checking action, you can still perform card exchange
+      // if you lost the checking action, the exchange does not occur and the next round begins
+      if (new_game_state.lost_check !== random_oponent_id) {
+
+        setGameState({...new_game_state, kabuki_exchange_ongoing: false});
+        StartNextRound();
+      }
+    };
+
+    new_game_state = {...state, kabuki_exchange_ongoing: true,
+                                kabuki_hand: ShowCardsForKabukiExchange({deck: state.deck,
+                                                                         player: state.players[3]
+                                                                  })} ;
     setGameState(new_game_state);
   };
 
@@ -215,6 +219,7 @@ function App() {
 
   const OnePersonaDies = (player_id) => {
     var players = state.players;
+    var next_game_start = false;
 
     if (!players[player_id].card_1_dead) {
 
@@ -229,11 +234,10 @@ function App() {
       if (player_id ===3) {
 
         alert("Sorry, you are out of the game. You can start a new one.");
-        StartNextGame();
-        return(0);
+        next_game_start = true;
       }
 
-      setGameState({...state, players: players, lost_check: player_id}); 
+      setGameState({...state, players: players, lost_check: player_id, next_game_start: next_game_start}); 
     };
 
     return players;
@@ -348,8 +352,8 @@ function App() {
   };
 
   const KillAsNinja = (oponents, oponent_id) => {
-    const oponent_checks = Math.random() > 0.9 ? true : false;
-    const oponent_uses_geisha = Math.random() > 0.01 ? true : false;
+    const oponent_checks = Math.random() > 0.66 ? true : false;
+    const oponent_uses_geisha = Math.random() > 0.33 ? true : false;
 
     var players = [...state.players];
     players[3].coin_counter -= 3;
@@ -391,7 +395,6 @@ function App() {
         new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
       };
 
-    console.log(new_game_state);
     setGameState({...new_game_state, oponent_id: oponent_id});
   };
 
@@ -503,20 +506,22 @@ function App() {
   const StartNextRound = () => {
     var players = [...state.players];
     var newround = (state.round + 1) % 4;
+    var new_game_state = {...state};
 
+    // do not start the game if player is dead!
     while ( players[newround].dead ) {
       if (players[newround] === state.round) {
         alert("You won the game!");
       };
       newround = (newround + 1) % 4;
     }
-    // do not start the game if player is dead!
     
+    // set timer for other users rounds
     var counter = 3;
 
     if (players[3].dead) { // if you lost the game
 
-      return ( "" ); // TODO
+      new_game_state = {...state, next_game_start: true}; // TODO
 
     } else if (newround === 3) { // if the round belongs to the active user (YOU)
 
@@ -546,7 +551,7 @@ function App() {
             clearInterval(interval_id);
             document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
 
-            var new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
+            new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
             new_game_state.players[newround].message = action.postround_message;
 
             setGameState({ ...new_game_state});
@@ -555,11 +560,7 @@ function App() {
         counter -= 1;
       }, 1000);
 
-      // if (state.lost_check && (state.lost_check === newround)) 
-      //   { players[newround].postround_message = "I lost the check performed by " };
-      // console.log(state);
-
-      setGameState({ ...state, round: newround, 
+      setGameState({ ...new_game_state, round: newround, 
                    action_ongoing: action.action_id,
                    oponent_id: action.oponent_id,
                    interval_id: interval_id,
@@ -597,6 +598,8 @@ function App() {
     var players = state.players
     let player_checks = Math.random() > 0.5;
     var new_game_state = {...state};
+
+    clearInterval(state.interval_id);
 
     if (player_checks) {
       new_game_state = OponentChecks(player_id, 3, 'daymio');
@@ -704,7 +707,7 @@ function App() {
     };
   };
 
-  const ChooseCardsForPlayer = (player_id) => {
+  const ChooseCardsForPlayer = (player_id, state) => {
     var players = state.players;
     var deck = state.deck; // deck is a list of all cards available for players
 
@@ -717,16 +720,16 @@ function App() {
     players[player_id].card_1_image = persona_1;
     players[player_id].card_2_image = persona_2;
 
-    setGameState({...state, players: players, deck: deck});
+    return {...state, players: players, deck: deck};
   };
 
   const StartNextGame = () => {
-    ChooseCardsForPlayer(0);
-    ChooseCardsForPlayer(1);
-    ChooseCardsForPlayer(2);
-    ChooseCardsForPlayer(3);
+    var new_game_state = ChooseCardsForPlayer(0, game_state);
+    new_game_state = ChooseCardsForPlayer(1, new_game_state);
+    new_game_state = ChooseCardsForPlayer(2, new_game_state);
+    new_game_state = ChooseCardsForPlayer(3, new_game_state);
 
-    setGameState({...state, game_ongoing: true});
+    setGameState({...new_game_state, game_ongoing: true, next_game_start: false});
   };
 
   const NewGame = () => {
@@ -766,7 +769,7 @@ function App() {
       <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
       <h2>Remaining deck: {state.deck.join(' ')}</h2>
       <div className='options'>
-         { ((state.action_ongoing !== false) && (state.round !== 3)) && RenderCounteraction({state: state}) }
+         { ( state.action_ongoing && (state.round !== 3)) && RenderCounteraction({state: state}) }
       </div>
       <div id='counter'></div>
       <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
