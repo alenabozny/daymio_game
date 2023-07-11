@@ -219,11 +219,12 @@ function App() {
 
   const OnePersonaDies = (player_id) => {
     var players = state.players;
+    var new_game_state = {...state};
 
     if (!players[player_id].card_1_dead) {
 
       players[player_id].card_1_dead = true; 
-      setGameState({...state, players: players}); 
+      setGameState({...new_game_state, players: players}); 
 
     } else if (!players[player_id].card_2_dead) {
 
@@ -233,10 +234,10 @@ function App() {
       if (player_id ===3) {
 
         alert("Sorry, you are out of the game. You can start a new one.");
-        setGameState({...state, players: players, lost_check: player_id, game_ongoing: false});
+        new_game_state = {...new_game_state, players: players, lost_check: player_id, game_ongoing: false};
       }
 
-      setGameState({...state, players: players, lost_check: player_id}); 
+      setGameState({...new_game_state, players: players, lost_check: player_id}); 
     };
 
     return players;
