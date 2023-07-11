@@ -1,4 +1,4 @@
-var game_state = {
+const new_game_state = {
   players: [
       {
       	avatar: "https://placehold.co/125x125",
@@ -8,7 +8,7 @@ var game_state = {
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
-        dead: true,
+        dead: false,
         coin_counter: 0,
         message:''
       },
@@ -61,7 +61,7 @@ var game_state = {
   taking_2_coins_count: 0,
   ninja_attack_count: 0,
 
-  next_game_start: false,
+  next_game_start: 0,
 
   lost_check: null,
 
@@ -82,4 +82,4 @@ var game_state = {
     }; 
 
 
-export default game_state;
+export default new_game_state;

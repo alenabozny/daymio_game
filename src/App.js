@@ -18,7 +18,7 @@ function App() {
   useEffect(()=>{ state.defeated_geisha_attact_count > 0 && StartNextRound() }, [state.defeated_geisha_attact_count]); 
   useEffect(()=>{ state.taking_2_coins_count > 0 && StartNextRound() }, [state.taking_2_coins_count]);  
   useEffect(()=>{ state.ninja_attack_count > 0 && StartNextRound() }, [state.ninja_attack_count]);
-  useEffect(()=>{ state.next_game_start && StartNextGame() }, [state.next_game_start])
+  // useEffect(()=>{ state.next_game_start && StartNextGame() }, [state.next_game_start])
 
   const ToggleKabukiExchangeOn = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
@@ -219,7 +219,6 @@ function App() {
 
   const OnePersonaDies = (player_id) => {
     var players = state.players;
-    var next_game_start = false;
 
     if (!players[player_id].card_1_dead) {
 
@@ -234,10 +233,10 @@ function App() {
       if (player_id ===3) {
 
         alert("Sorry, you are out of the game. You can start a new one.");
-        next_game_start = true;
+        setGameState({...state, players: players, lost_check: player_id, game_ongoing: false});
       }
 
-      setGameState({...state, players: players, lost_check: player_id, next_game_start: next_game_start}); 
+      setGameState({...state, players: players, lost_check: player_id}); 
     };
 
     return players;
@@ -348,7 +347,6 @@ function App() {
     alert("You don't get any coins in this round");
     let count = state.taking_2_coins_count += 1;
     setGameState({...state, twocoins_modal: false, taking_2_coins_count: count});
-    // console.log("samurai modal should be off! " + !state.twocoins_modal);
   };
 
   const KillAsNinja = (oponents, oponent_id) => {
@@ -380,7 +378,6 @@ function App() {
           new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
         } else {
           // 1.2.
-          console.log(players);
           new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
         }
 
@@ -510,9 +507,10 @@ function App() {
 
     // do not start the game if player is dead!
     while ( players[newround].dead ) {
-      if (players[newround] === state.round) {
-        alert("You won the game!");
-      };
+      // if (players[newround] === state.round) {
+      //   alert("You won the game!");
+      //   setGameState({...state, game_ongoing: false});
+      // };
       newround = (newround + 1) % 4;
     }
     
@@ -521,9 +519,21 @@ function App() {
 
     if (players[3].dead) { // if you lost the game
 
-      new_game_state = {...state, next_game_start: true}; // TODO
+      alert("You lost the game, you can start a new one");
+      new_game_state = {...state, game_ongoing: false}; // TODO
+      setGameState(new_game_state);
 
     } else if (newround === 3) { // if the round belongs to the active user (YOU)
+
+      let oponents = [...players];
+      oponents.splice(3,1);
+      oponents = oponents.filter(player => !player.dead);
+      
+      if (oponents.length === 0) {
+        alert("You won the game!");
+        setGameState({...state, game_ongoing: false});
+        return(0);
+      }
 
       document.getElementById("counter").innerHTML = 'Your round is ongoing.';
       setGameState({ ...state, round: newround, action_ongoing: true});
@@ -707,9 +717,7 @@ function App() {
     };
   };
 
-  const ChooseCardsForPlayer = (player_id, state) => {
-    var players = state.players;
-    var deck = state.deck; // deck is a list of all cards available for players
+  const ChooseCardsForPlayer = (player_id, deck, players) => {
 
     const random_index_1 = Math.floor(Math.random()*deck.length)
     var persona_1 = deck.splice(random_index_1, 1)[0]; // choose random card from deck and remove it (hand it to player)
@@ -718,18 +726,26 @@ function App() {
     var persona_2 = deck.splice(random_index_2, 1)[0]; // choose another random card from deck and hand it to player)
 
     players[player_id].card_1_image = persona_1;
+    players[player_id].card_1_dead = false;
     players[player_id].card_2_image = persona_2;
+    players[player_id].card_2_dead = false;
+    players[player_id].coin_counter = 0;
+    players[player_id].dead = false;
+    players[player_id].message = '';
 
-    return {...state, players: players, deck: deck};
+    return {players: players, deck: deck};
   };
 
   const StartNextGame = () => {
-    var new_game_state = ChooseCardsForPlayer(0, game_state);
-    new_game_state = ChooseCardsForPlayer(1, new_game_state);
-    new_game_state = ChooseCardsForPlayer(2, new_game_state);
-    new_game_state = ChooseCardsForPlayer(3, new_game_state);
+    var deck = [...game_state.deck];
+    var players = [...game_state.players];
 
-    setGameState({...new_game_state, game_ongoing: true, next_game_start: false});
+    var res1 = ChooseCardsForPlayer(0, deck, players);
+    var res2 = ChooseCardsForPlayer(1, res1.deck, res1.players);
+    var res3 = ChooseCardsForPlayer(2, res2.deck, res2.players);
+    var res4 = ChooseCardsForPlayer(3, res3.deck, res3.players);
+
+    setGameState({...game_state, game_ongoing: true, deck: res4.deck, players: res4.players});
   };
 
   const NewGame = () => {
