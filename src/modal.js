@@ -24,6 +24,27 @@ export const GeishaModal = ({handleGeishaProtectAction, handleGeishaNoAction, ha
   );
 };
 
+export const GeishaCheckModal = ({handleCheckGeisha, handleNoCheckGeisha, show, children}) => {
+  const showHideClassName = show ? "modal display-block" : "modal display-none";
+
+  return (
+    <div className={showHideClassName}>
+      <section className="modal-main">
+        {children}
+
+        <button type="button" onClick={ handleCheckGeisha }>
+          Check if your oponent has geisha.
+        </button>
+
+        <button type="button" onClick={ handleNoCheckGeisha }>
+          Do not check, your ninja attack will be defeated.
+        </button>
+
+      </section>
+    </div>
+  );
+};
+
 export const TwoCoinsModal = ({handleTwoCoinsAction, handleTwoCoinsNoAction, show, children}) => {
   const showHideClassName = show ? "modal display-block" : "modal display-none";
 
@@ -43,5 +64,3 @@ export const TwoCoinsModal = ({handleTwoCoinsAction, handleTwoCoinsNoAction, sho
     </div>
   );
 };
-
-// export default GeishaModal;

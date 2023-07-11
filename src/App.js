@@ -1,7 +1,7 @@
 import './App.css';
 import "./styles.css";
 // import Player from './player';
-import { GeishaModal, TwoCoinsModal } from './modal';
+import { GeishaModal, GeishaCheckModal, TwoCoinsModal } from './modal';
 import Board from './board.js';
 import React, { useState, useEffect } from "react";
 import game_state from './game_state.js';
@@ -17,6 +17,7 @@ function App() {
   useEffect(()=>{ state.kabuki_finished_count > 0 && StartNextRound() }, [state.kabuki_finished_count]);  
   useEffect(()=>{ state.defeated_geisha_attact_count > 0 && StartNextRound() }, [state.defeated_geisha_attact_count]); 
   useEffect(()=>{ state.taking_2_coins_count > 0 && StartNextRound() }, [state.taking_2_coins_count]);  
+  useEffect(()=>{ state.ninja_attack_count > 0 && StartNextRound() }, [state.ninja_attack_count]);
 
   const ToggleKabukiExchangeOn = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
@@ -173,11 +174,11 @@ function App() {
     StartNextRound();
   };
 
-  const Take2CoinsHelper = () => {
+  const Take2Coins = () => {
     let players = [...state.players];
     var new_game_state = {...state};
 
-    var do_oponent_prevent = true;//Math.random() > 0.001 ? true : false;
+    var do_oponent_prevent = Math.random() > 0.5 ? true : false;
 
     if (do_oponent_prevent) {
       var random_oponent_id = RandomOponentId({players: state.players, 
@@ -191,14 +192,7 @@ function App() {
       new_game_state = {...new_game_state, players: players, twocoins_modal: false, taking_2_coins_count: count};
     }
 
-    return( new_game_state )
-  };
-
-  const Take2Coins = () => {
-    var new_game_state = Take2CoinsHelper();
     setGameState(new_game_state);
-    console.log(new_game_state)
-    // !state.twocoins_modal && StartNextRound();
   };
 
   const kill = (oponents, oponent_id, num_blood_money) => {
@@ -354,25 +348,81 @@ function App() {
   };
 
   const KillAsNinja = (oponents, oponent_id) => {
-    const oponent_checks = Math.random() > 0.5 ? true : false;
-    const oponent_uses_geisha = Math.random() > 0.5 ? true : false;
+    const oponent_checks = Math.random() > 0.9 ? true : false;
+    const oponent_uses_geisha = Math.random() > 0.01 ? true : false;
+
+    var players = [...state.players];
+    players[3].coin_counter -= 3;
     var new_game_state = state;
 
+    // You perforn a ninja attack. The oponent can:
+    // 1. check if you have ninja. 
+    //   1.1. If he looses, he dies with both personas. You pay 3 coins.
+    //   1.2. If he wins, you die with one persona. You still pay 3 coins.
+    // 2. do nothing and die with one persona. You pay 3 coins.
+    // 3. defend himself with geisha. Then:
+    //  3.1. Nothing happens, you just pay 3 coins.
+    //  3.2. You can check if he has geisha:
+    //    3.2.1. He looses - he dies with both personas. You pay 3 coins.
+    //    3.2.2. He wins - you lose, and he doesn't die because of the ninja attack. You pay 3 coins.
+
     if (oponent_checks) {
-      
-        new_game_state = OponentChecks(oponent_id, 3, 'ninja'); 
-        setGameState(new_game_state);
+       // 1.
+        new_game_state = OponentChecks(oponent_id, 3, 'ninja');
+        if (new_game_state.lost_check === oponent_id) {
+          // 1.1.
+          players = OnePersonaDies(oponent_id);
+
+          new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
+        } else {
+          // 1.2.
+          console.log(players);
+          new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
+        }
 
       } else if (oponent_uses_geisha) {
-
-        alert(state.players[oponent_id].name + ' uses Geisha to protect him/herself. Do you want to check ' + state.players[oponent_id].name + ' ?' );
+        // 3
+        new_game_state.geisha_check_modal = true;
+        // modal fires
 
       } else {
-        kill(oponents, oponent_id, 3);
+        // 2
+        players = OnePersonaDies(oponent_id);
+        new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1 }
       };
 
-    setGameState(new_game_state);
-    StartNextRound();
+    console.log(new_game_state);
+    setGameState({...new_game_state, oponent_id: oponent_id});
+  };
+
+  function handleCheckGeisha(ninja_attacker_id, geisha_protector_id) {
+    var new_game_state = {...state};
+    var players = new_game_state.players;
+
+    // 3.2.
+    new_game_state = OponentChecks(ninja_attacker_id, geisha_protector_id, 'geisha');
+
+    if (new_game_state.lost_check === geisha_protector_id) {
+      // 3.2.1
+      alert("Your oponent dies with both personas: first for the ninja attack, second for the lost checking action.");
+      players = OnePersonaDies(geisha_protector_id);
+
+      new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1, geisha_check_modal: false}
+    } else {
+      // 3.2.2.
+      new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1, geisha_check_modal: false}
+    }
+
+    setGameState(new_game_state)
+  };
+
+  function handleNoCheckGeisha(ninja_attacker_id, geisha_protector_id) {
+    // 3.1.
+    var players = state.players;
+
+    setGameState({...state, geisha_check_modal: false, 
+                            ninja_attack_count: state.ninja_attack_count += 1, 
+                            players: players})
   };
 
   const OponentChecks = (checker_id, oponent_id, persona) => {
@@ -403,7 +453,6 @@ function App() {
 
       // if it is a Geisha check, the oponent dies with both personas
       if (persona === 'geisha') { 
-        alert('Sorry, you are out of the game because of the lost checking action AND the ninja attack');
         OnePersonaDies(oponent_id) 
       }
 
@@ -692,7 +741,13 @@ function App() {
   const RenderBoard = () => {
     return(
     <>
-
+      { state.geisha_check_modal &&  
+        <GeishaCheckModal  
+               handleCheckGeisha = { () => handleCheckGeisha(3, state.oponent_id) }
+               handleNoCheckGeisha = { () => handleNoCheckGeisha() }
+               show = { state.geisha_check_modal }
+               children = { <p> Your oponent defends him/herself with Geisha. Do you want to check if he/she indeed has Geisha? </p> } />
+      }
       { state.geisha_modal &&  
         <GeishaModal handleGeishaProtectAction = { () => handleGeishaProtectAction(state.round) } 
                handleGeishaNoAction = { handleGeishaNoAction }
