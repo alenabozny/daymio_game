@@ -646,6 +646,10 @@ function App() {
       players[state.round].message = "I just lost checking action";
     } else {
       players[state.round].message = props.postround_message;
+      if (props.persona === 'samurai') {
+        players[state.round].coin_counter += 2;
+        players[3].coin_counter -= 2;
+      }
     };
 
    setGameState({...new_game_state, action_ongoing: true});
@@ -783,7 +787,7 @@ function App() {
 
       <h1>Round of player: {state.players[state.round].name}</h1>
       <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
-      <h2>Remaining deck: {state.deck.join(' ')}</h2>
+      {/*<h2>Remaining deck: {state.deck.join(' ')}</h2>*/}
       <div className='options'>
          { ( state.action_ongoing && (state.round !== 3)) && RenderCounteraction({state: state}) }
       </div>
