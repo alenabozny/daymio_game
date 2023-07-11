@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
   // 0 is for taking 1 coin
   // 1 is for taking 2 coins
@@ -24,7 +24,7 @@ const ACTIONS = {0: ["I'm gonna take 1 coin from the bank.",
                      "As NINJA, I just killed "]
                };
 
-function RandomOponentId(props) {
+export function RandomOponentId(props) {
   var oponent_ids = [];
   var players = [...props.players];
 
@@ -41,7 +41,7 @@ function RandomOponentId(props) {
                     } else if ((player.coin_counter < 2) && (props.action_id === '3')) {
                          return (-1);
                     } else { return (id); };
-                  }).filter( j => j != -1 );
+                  }).filter( j => j !== -1 );
 
   console.log("Oponent ids: " + oponent_ids);
 
@@ -63,24 +63,28 @@ function PossibleActions(props) {
   player.coin_counter > 7 && possible_actions.splice(2,1); 
                                  
   // check if we can steal from anybody in the game
-  var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2).filter(player => !player.dead);
+  var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2)
+                                                    .filter(player => !player.dead)
+                                                    .filter(player => player !== props.player);
+  console.log('Players from whom we can steal: ');
+  console.log(players_from_whom_we_can_steal);
   if (players_from_whom_we_can_steal.length === 0) { possible_actions.splice(3, 1); }
 
   return possible_actions
 }
 
-function ChooseAction(props) {
+export function ChooseAction(props) {
   var players = props.players;
   const current_player_id = props.newround;
-  const random_number = Math.random();
+  // const random_number = Math.random();
 
   var action_id = 0;
   var possible_actions = PossibleActions({players: players, player: players[current_player_id]});
-  console.log("Possible Actions: " + possible_actions);
 
   const num_actions = possible_actions.length;
 
-  var action_id = possible_actions[Math.floor(Math.random()*num_actions)];
+  action_id = possible_actions[Math.floor(Math.random()*num_actions)];
+  console.log(action_id);
 
   var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, 
                                                                                   current_player_id: current_player_id,
@@ -95,4 +99,4 @@ function ChooseAction(props) {
           players: players});
 };
 
-export default ChooseAction;
+ // { ChooseAction, RandomOponentId };

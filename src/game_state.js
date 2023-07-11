@@ -9,7 +9,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 7,
+        coin_counter: 0,
         message:''
       },
       {
@@ -21,7 +21,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: true,
-        coin_counter: 6,
+        coin_counter: 0,
         message:''
       },
       {
@@ -33,7 +33,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 5,
+        coin_counter: 0,
         message:''
       },
       {
@@ -45,7 +45,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 0,
+        coin_counter: 10,
         message:''
       }],
 
@@ -54,9 +54,14 @@ var game_state = {
   action_ongoing: false,
   kabuki_exchange_ongoing: false,
   kabuki_hand: {},
-  // TODO: implement who_lost_check to decide whether to reverse the action, or to proceed
+
+  kabuki_finished_count: 0,
+  defeated_geisha_attact_count: 0,
+  prevent_taking_2_coins_count: 0,
+
   lost_check: null,
   geisha_modal: false,
+  samurai_modal: false,
   game_ongoing: false,
   interval_id: null,
   deck: ['samurai', 'daymio', 'geisha', 'kabuki', 'ninja',
