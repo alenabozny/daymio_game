@@ -251,7 +251,7 @@ function App() {
   };
 
   const Steal2Coins = (robber_id, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.01 ? true : false;
+    const do_oponent_check = Math.random() > 0.5 ? true : false;
     var new_game_state = {...state};
 
     // does the oponent want to check if the robber indeed has Samurai?
@@ -265,21 +265,31 @@ function App() {
     StartNextRound();
   }
 
+  const Take3Coins = (taker_id, players) => {
+    players[taker_id].coin_counter += 3;
+
+    return {...state, players: players}
+  }
+
   const TakeCoinsAsDaymio = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
                                              current_player_id: 3,
                                              action_id: 3});
 
     var new_game_state = {...state};
-    var do_oponent_check = Math.random() > 0.5 ? true : false;
+    var do_oponent_check = Math.random() > 0.01 ? true : false;
 
     if(!do_oponent_check) {
 
-      new_game_state = {...state, players: state.players[3].coin_counter += 3};
+      new_game_state = Take3Coins(3, state.players);
 
     } else {
 
-      new_game_state = {...OponentChecks(random_oponent_id, 3, 'daymio')};
+      // if someone wants to check if the taker indeed has Daymio the checking action starts
+      new_game_state = OponentChecks(random_oponent_id, 3, 'daymio');
+      // if the oponent loses, the 3 coins taking action is performed and the next round starts
+      // if the taker loses, nothing changes with the coins, the next round begins
+      new_game_state = new_game_state.lost_check === random_oponent_id && Take3Coins(3, new_game_state.players);
 
       setGameState(new_game_state);
       StartNextRound();
