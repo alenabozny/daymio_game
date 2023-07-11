@@ -1,7 +1,7 @@
 import './App.css';
 import "./styles.css";
 // import Player from './player';
-import { GeishaModal, SamuraiModal } from './modal';
+import { GeishaModal, TwoCoinsModal } from './modal';
 import Board from './board.js';
 import React, { useState, useEffect } from "react";
 import game_state from './game_state.js';
@@ -16,7 +16,7 @@ function App() {
 
   useEffect(()=>{ state.kabuki_finished_count > 0 && StartNextRound() }, [state.kabuki_finished_count]);  
   useEffect(()=>{ state.defeated_geisha_attact_count > 0 && StartNextRound() }, [state.defeated_geisha_attact_count]); 
-  useEffect(()=>{ state.prevent_taking_2_coins_count > 0 && StartNextRound() }, [state.prevent_taking_2_coins_count]);  
+  useEffect(()=>{ state.taking_2_coins_count > 0 && StartNextRound() }, [state.taking_2_coins_count]);  
 
   const ToggleKabukiExchangeOn = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
@@ -177,17 +177,18 @@ function App() {
     let players = [...state.players];
     var new_game_state = {...state};
 
-    var do_oponent_prevent = Math.random() > 0.01 ? true : false;
+    var do_oponent_prevent = true;//Math.random() > 0.001 ? true : false;
 
     if (do_oponent_prevent) {
       var random_oponent_id = RandomOponentId({players: state.players, 
                                              current_player_id: 3,
                                              action_id: 2});
 
-      new_game_state = {...new_game_state, oponent_id: random_oponent_id, samurai_modal: true};
+      new_game_state = {...new_game_state, oponent_id: random_oponent_id, twocoins_modal: true};
     } else {
       players[3].coin_counter += 2;
-      new_game_state = {...new_game_state, players: players, samurai_modal: false};
+      let count = state.taking_2_coins_count += 1;
+      new_game_state = {...new_game_state, players: players, twocoins_modal: false, taking_2_coins_count: count};
     }
 
     return( new_game_state )
@@ -196,7 +197,8 @@ function App() {
   const Take2Coins = () => {
     var new_game_state = Take2CoinsHelper();
     setGameState(new_game_state);
-    !state.samurai_modal && StartNextRound();
+    console.log(new_game_state)
+    // !state.twocoins_modal && StartNextRound();
   };
 
   const kill = (oponents, oponent_id, num_blood_money) => {
@@ -277,7 +279,7 @@ function App() {
                                              action_id: 3});
 
     var new_game_state = {...state};
-    var do_oponent_check = Math.random() > 0.01 ? true : false;
+    var do_oponent_check = Math.random() > 0.5 ? true : false;
 
     if(!do_oponent_check) {
 
@@ -331,19 +333,24 @@ function App() {
                                      defeated_geisha_attact_count: state.defeated_geisha_attact_count += 1});
   };
 
-  const handleCheckSamuraiAction = (oponent_id) => {
+  const handleTwoCoinsAction = (oponent_id) => {
     var new_game_state = OponentChecks(3, oponent_id, 'daymio');
+    var count = state.taking_2_coins_count += 1;
 
-    setGameState({...new_game_state, samurai_modal: false});
-    StartNextRound();
+    // if oponent lost check, then taking two coins action is performed and the next round begins
+    // if the taker loses, nothing changes with the coins
+    if (new_game_state.lost_check === oponent_id) {
+      new_game_state.players[3].coin_counter +=  2;
+    }
+
+    setGameState({...new_game_state, players: new_game_state.players, twocoins_modal: false, taking_2_coins_count: count});
   };
 
-  const handleSamuraiNoAction = () => {
-    setGameState({...state, samurai_modal: false});
-    // alert("You don't get any coins in this round");
-    
-    // console.log("samurai modal should be off! " + !state.samurai_modal);
-    StartNextRound();
+  const handleTwoCoinsNoAction = () => {
+    alert("You don't get any coins in this round");
+    let count = state.taking_2_coins_count += 1;
+    setGameState({...state, twocoins_modal: false, taking_2_coins_count: count});
+    // console.log("samurai modal should be off! " + !state.twocoins_modal);
   };
 
   const KillAsNinja = (oponents, oponent_id) => {
@@ -515,7 +522,7 @@ function App() {
   const RenderPossibleActions = props => {
 
   let players = props.state.players;
-  let oponents = [...players]; // hard copy the players to later create the oponents list
+  let oponents = [...players]; // hard copy players to create the oponents list
   oponents.splice(3, 1);
 
   return (
@@ -550,7 +557,7 @@ function App() {
       new_game_state = {...state, players: players};
     };
 
-    setGameState({...new_game_state, prevent_taking_2_coins_count: state.prevent_taking_2_coins_count += 1});
+    setGameState({...new_game_state, taking_2_coins_count: state.taking_2_coins_count += 1});
   };
 
   const CheckDaymioWhenPlayerTakes3Coins = (props) => {
@@ -693,10 +700,10 @@ function App() {
                show = { state.geisha_modal }
                children = { <p> What do you want to do? </p> } />
       }
-      { (state.samurai_modal && state.oponent_id) &&  
-        <SamuraiModal handleCheckSamuraiAction = { () => handleCheckSamuraiAction(state.oponent_id) } 
-               handleSamuraiNoAction = { handleSamuraiNoAction }
-               show = { state.samurai_modal }
+      { state.twocoins_modal &&  
+        <TwoCoinsModal handleTwoCoinsAction = { () => handleTwoCoinsAction(state.oponent_id) } 
+               handleTwoCoinsNoAction = { handleTwoCoinsNoAction }
+               show = { state.twocoins_modal }
                children = { <p> {state.players[state.oponent_id].name} (pretends that he/she) has Daymio and prevents you from taking 2 coins. What do you want to do? </p> } />
       }
 

@@ -24,19 +24,19 @@ export const GeishaModal = ({handleGeishaProtectAction, handleGeishaNoAction, ha
   );
 };
 
-export const SamuraiModal = ({handleCheckSamuraiAction, handleSamuraiNoAction, show, children}) => {
+export const TwoCoinsModal = ({handleTwoCoinsAction, handleTwoCoinsNoAction, show, children}) => {
   const showHideClassName = show ? "modal display-block" : "modal display-none";
 
   return (
-    <div className={showHideClassName}>
+    <div className={ showHideClassName }>
       <section className="modal-main">
         {children}
 
-        <button type="button" onClick={ handleCheckSamuraiAction }>
+        <button type="button" onClick={ handleTwoCoinsAction }>
           Check if your checker has Daymio.
         </button>
 
-        <button type="button" onClick={ handleSamuraiNoAction }>
+        <button type="button" onClick={ handleTwoCoinsNoAction }>
           Do nothing and let the player prevent you from taking 2 coins.
         </button>
       </section>

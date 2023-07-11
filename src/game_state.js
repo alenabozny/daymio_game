@@ -57,7 +57,7 @@ var game_state = {
 
   kabuki_finished_count: 0,
   defeated_geisha_attact_count: 0,
-  prevent_taking_2_coins_count: 0,
+  taking_2_coins_count: 0,
 
   lost_check: null,
   geisha_modal: false,

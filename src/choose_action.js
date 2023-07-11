@@ -43,7 +43,7 @@ export function RandomOponentId(props) {
                     } else { return (id); };
                   }).filter( j => j !== -1 );
 
-  console.log("Oponent ids: " + oponent_ids);
+  // console.log("Oponent ids: " + oponent_ids);
 
   var random_oponent_id = oponent_ids[Math.floor(Math.random()*oponent_ids.length)];
 
