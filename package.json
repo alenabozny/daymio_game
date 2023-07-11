@@ -2,7 +2,7 @@
   "name": "daymio_game",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://alenabozny.github.io/daymio_game",
+  "homepage": "https://alenabozny.github.io/daymio_game",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
