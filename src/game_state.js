@@ -33,7 +33,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 0,
+        coin_counter: 10,
         message:''
       },
       {
@@ -45,7 +45,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 10,
+        coin_counter: 0,
         message:''
       }],
 

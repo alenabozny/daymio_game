@@ -243,9 +243,7 @@ function App() {
     return players;
   };
 
-  const Steal = (robber_id, oponent_id) => {
-    var players = state.players;
-
+  const Steal = (robber_id, oponent_id, players) => {
     players[robber_id].coin_counter += 2;
     players[oponent_id].coin_counter -= 2;
 
@@ -253,10 +251,15 @@ function App() {
   };
 
   const Steal2Coins = (robber_id, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.5 ? true : false;
+    const do_oponent_check = Math.random() > 0.01 ? true : false;
     var new_game_state = {...state};
 
-    do_oponent_check ? new_game_state = OponentChecks(oponent_id, robber_id, 'samurai') : new_game_state = Steal(robber_id, oponent_id);
+    // does the oponent want to check if the robber indeed has Samurai?
+    new_game_state = do_oponent_check && OponentChecks(oponent_id, robber_id, 'samurai');
+    // if the check wasn't performed, the lost check indicator is null;
+    // if the check was performed and the robber lost, nothing changes, the next round starts;
+    // if the check was performed and the oponent lost, the robbery takes place and then the next round starts
+    new_game_state = new_game_state.lost_check === oponent_id && Steal(robber_id, oponent_id, new_game_state.players);
 
     setGameState(new_game_state);
     StartNextRound();
