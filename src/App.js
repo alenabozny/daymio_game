@@ -18,7 +18,6 @@ function App() {
   useEffect(()=>{ state.defeated_geisha_attact_count > 0 && StartNextRound() }, [state.defeated_geisha_attact_count]); 
   useEffect(()=>{ state.taking_2_coins_count > 0 && StartNextRound() }, [state.taking_2_coins_count]);  
   useEffect(()=>{ state.ninja_attack_count > 0 && StartNextRound() }, [state.ninja_attack_count]);
-  // useEffect(()=>{ state.next_game_start && StartNextGame() }, [state.next_game_start])
 
   const ToggleKabukiExchangeOn = () => {
     var random_oponent_id = RandomOponentId({players: state.players, 
@@ -157,13 +156,13 @@ function App() {
 
   const Steal2CoinsButtons = props => {
     let oponents = props.oponents;
+    let oponents_to_steal_from = oponents.filter(oponent => (oponent.coin_counter >= 2) && !oponent.dead);
 
     return (
       <>
-      <h4>Steal 2 coins from</h4>
-          {oponents.map((oponent, id) =>(
-            ((oponent.coin_counter >= 2) && !oponent.dead)
-              && <button key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button>
+      { oponents_to_steal_from.length !== 0 && <h4>Steal 2 coins from</h4> }
+          {oponents_to_steal_from.map((oponent, id) =>(
+            <button key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button>
         ))}
       </>
     )
@@ -427,13 +426,14 @@ function App() {
   };
 
   const OponentChecks = (checker_id, oponent_id, persona) => {
-    var new_game_state = state;
+    var new_game_state = {...state};
     var players = state.players;
     alert(players[checker_id].name + ' wants to know if ' + players[oponent_id].name + ' have '+ persona);
     var oponent_1_image = players[oponent_id].card_1_image;
     var oponent_1_dead = players[oponent_id].card_1_dead;
     var oponent_2_image = players[oponent_id].card_2_image;
     var oponent_2_dead = players[oponent_id].card_2_dead;
+    const random_index_1 = Math.floor(Math.random() * new_game_state.deck.length);
 
     // if the oponent have a {persona}, and the persona is not dead, then the checker dies
     if ((( oponent_1_image === persona ) && !oponent_1_dead ) 
@@ -443,13 +443,44 @@ function App() {
  
       players = OnePersonaDies(checker_id);
       alert(players[checker_id].name + ' dies, because of the lost checking action.');
-      new_game_state = {...state, players: players, lost_check: checker_id};
+
+      // console.log("Old deck: " + state.deck);
+
+      // the winner of the checking action (oponent in this case) 
+      // exchanges revealed card {persona} with some card from the deck.
+      // choose random card from deck and remove it (hand it to player)
+      var new_persona = new_game_state.deck.splice(random_index_1, 1)[0];
+
+      // console.log(new_persona);
+      // console.log("Old cards of the winner: " + [oponent_1_image, oponent_2_image]);
+      // console.log("New deck: " + new_game_state.deck);
+
+      if (oponent_1_image === persona && !oponent_1_dead ) { 
+
+        players[oponent_id].card_1_image = new_persona ;
+        new_game_state.deck.push(oponent_1_image);
+
+      } else { 
+
+        players[oponent_id].card_2_image = new_persona ;
+        new_game_state.deck.push(oponent_2_image);
+
+      };
+
+      console.log("Newer deck: " + new_game_state.deck);
+      console.log("New winner hand: " + [players[oponent_id].card_1_image, players[oponent_id].card_2_image]);
+
+      new_game_state = {...state, players: players, lost_check: checker_id, deck: new_game_state.deck};
 
     // if don't... then the oponent dies
     } else {
 
       players = OnePersonaDies(oponent_id);
       alert(players[oponent_id].name + ' dies, because of the lost checking action.');
+      
+      // the winner of the checking action (checker in this case) 
+      // does not exchange any card. Hes/her cards were not revealed.
+
       new_game_state = {...state, players: players, lost_check: oponent_id};
 
       // if it is a Geisha check, the oponent dies with both personas
