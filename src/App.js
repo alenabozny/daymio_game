@@ -25,7 +25,7 @@ function App() {
                                              action_id: 4});
 
     var new_game_state = {...state};
-    var do_oponent_check = true;//Math.random() > 0.5 ? true : false;
+    var do_oponent_check = Math.random() > 0.5 ? true : false;
 
     if(do_oponent_check) {
 
@@ -156,7 +156,7 @@ function App() {
   };
 
   const Steal2CoinsButtons = props => {
-    let oponents = props.oponents;
+    let oponents = [...props.oponents];
     let oponents_to_steal_from = oponents.filter(oponent => (oponent.coin_counter >= 2) && !oponent.dead);
 
     return (
@@ -251,7 +251,7 @@ function App() {
   };
 
   const Steal2Coins = (robber_id, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.99 ? true : false;
+    const do_oponent_check = Math.random() > 0.5 ? true : false;
     var new_game_state = {...state};
 
     // does the oponent want to check if the robber indeed has Samurai?
