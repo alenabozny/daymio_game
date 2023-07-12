@@ -1,6 +1,7 @@
 .card img {
 	max-width: 125px;
 	float: left;
+	margin: 7px;
 }
 
 .players {
@@ -10,7 +11,7 @@
 .player-card {
 	float: left;
 	padding: 10px;
-	width: 250px;
+/*	width: 250px;*/
 }
 
 .player-card button {

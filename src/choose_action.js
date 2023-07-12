@@ -71,15 +71,16 @@ function PossibleActions(props) {
 export function ChooseAction(props) {
   var players = props.players;
   const current_player_id = props.newround;
-  // const random_number = Math.random();
 
   var action_id = 0;
   var possible_actions = PossibleActions({players: players, player: players[current_player_id]});
 
   const num_actions = possible_actions.length;
 
-  action_id = possible_actions[Math.floor(Math.random()*num_actions)];
-  console.log(action_id);
+  action_id = possible_actions[Math.floor(Math.random() * num_actions)];
+
+  console.log("Possible actions: ");
+  console.log(possible_actions);
 
   var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, 
                                                                                   current_player_id: current_player_id,
@@ -96,5 +97,3 @@ export function ChooseAction(props) {
           oponent_id: random_oponent_id,
           players: players});
 };
-
- // { ChooseAction, RandomOponentId };

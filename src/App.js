@@ -587,11 +587,13 @@ function App() {
 
       var interval_id = setInterval(function() {
         document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
+        document.getElementById('next_round_button').style.display = 'none';
 
         if ((counter < 0) && !state.geisha_modal) {
 
             clearInterval(interval_id);
             document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
+            document.getElementById('next_round_button').style.display = 'block';
 
             new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
             new_game_state.players[newround].message = action.postround_message;
@@ -787,7 +789,32 @@ function App() {
   const NewGame = () => {
     return (
       <>
-      <button onClick={() => StartNextGame()}>Start new Game!</button>
+      <br /> Players receive 2 character cards to start. Everyone knows only their cards.
+      The goal of the game - SURVIVE.
+      <ol> In every move:
+        <li> Get a coin from the vault, OR </li>
+        <li>  Take two coins from the treasury, OR </li>
+        <li>  Use character skills, OR </li>
+        <li>  Perform a Coup d'Etat: Pay seven coins and kill an enemy character </li>
+      </ol>
+      
+      <br /> You can have a maximum of ten coins.
+      <br /> You can bluff and use any character's abilities, regardless of what cards you have.
+      <br /> Checking consists in forcing the player to reveal the card of the character being used.
+      <br /> Only the player against whom the skill is used can check.
+      <br /> Exceptions - Daimyo's first ability and Kabuki's first ability.
+      <br /> 
+      <br /> Right check:
+      <br /> The bluffer permanently loses the revealed card. His move is invalidated.
+      <br /> Invalid check:
+      <br /> The player returns the faceup character to the supply and shuffles. Fetches a new tab.
+      <br /> The caller chooses one of his cards and permanently loses it.
+      <br /> A dead character remains exposed until the end of the game.
+      <br /> A failed geisha bluff or a false ninja call results in the loss of both cards.
+      <br /> The player who loses all cards dies. His money is returned to the treasury.
+      <br /> 
+      <br /> 
+      <button onClick={() => StartNextGame()}><h2>Start new Game!</h2></button>
       </>
       )
 

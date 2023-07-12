@@ -1,12 +1,18 @@
 import React from "react";
+import reverse from './images/reverse.png';
+import geisha from './images/geisha.png';
+import daimyo from './images/daimyo.png';
+import ninja from './images/ninja.png';
+import kabuki from './images/kabuki.png';
+import samurai from './images/samurai.png';
 
 // Players as class objects
-const cardCover = "https://img.freepik.com/free-vector/hand-drawn-japanese-wave-pattern-illustration_23-2149522575.jpg?w=826&t=st=1686747207~exp=1686747807~hmac=3b573a7943db5c54231481b46956fd9d7091caf30d0a029d71daa800985e4f82"
-const personaImages = {"ninja": "https://freesvg.org/img/Ninja-Head.png",
-    "geisha": "https://freesvg.org/img/df54ed72.png",
-    "daymio": "https://freesvg.org/img/Royal_face1.png",
-    "samurai": "https://freesvg.org/img/025.png",
-    "kabuki": "https://freesvg.org/img/zeimusu-kabuki-actor.png"
+const cardCover = reverse;
+const personaImages = {"ninja": ninja,
+    "geisha": geisha,
+    "daymio": daimyo,
+    "samurai": samurai,
+    "kabuki": kabuki
   };
 
 function Player(props) {
