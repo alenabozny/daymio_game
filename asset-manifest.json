@@ -1,15 +1,21 @@
 {
   "files": {
-    "main.css": "/daymio_game/static/css/main.f86c3e21.css",
-    "main.js": "/daymio_game/static/js/main.06a2336e.js",
+    "main.css": "/daymio_game/static/css/main.167b9d67.css",
+    "main.js": "/daymio_game/static/js/main.b91b799d.js",
     "static/js/787.1e0928c5.chunk.js": "/daymio_game/static/js/787.1e0928c5.chunk.js",
+    "static/media/reverse.png": "/daymio_game/static/media/reverse.3d65396f875e2f8b213a.png",
+    "static/media/daimyo.png": "/daymio_game/static/media/daimyo.1a744d9dbed90cfafd08.png",
+    "static/media/samurai.png": "/daymio_game/static/media/samurai.16a90162cf7d4eaf41db.png",
+    "static/media/kabuki.png": "/daymio_game/static/media/kabuki.a354787d0b95faaeed49.png",
+    "static/media/ninja.png": "/daymio_game/static/media/ninja.23a6d0a761daceb69797.png",
+    "static/media/geisha.png": "/daymio_game/static/media/geisha.4d87654c357be180a13f.png",
     "index.html": "/daymio_game/index.html",
-    "main.f86c3e21.css.map": "/daymio_game/static/css/main.f86c3e21.css.map",
-    "main.06a2336e.js.map": "/daymio_game/static/js/main.06a2336e.js.map",
+    "main.167b9d67.css.map": "/daymio_game/static/css/main.167b9d67.css.map",
+    "main.b91b799d.js.map": "/daymio_game/static/js/main.b91b799d.js.map",
     "787.1e0928c5.chunk.js.map": "/daymio_game/static/js/787.1e0928c5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f86c3e21.css",
-    "static/js/main.06a2336e.js"
+    "static/css/main.167b9d67.css",
+    "static/js/main.b91b799d.js"
   ]
 }
