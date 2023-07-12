@@ -25,7 +25,7 @@ function App() {
                                              action_id: 4});
 
     var new_game_state = {...state};
-    var do_oponent_check = Math.random() > 0.5 ? true : false;
+    var do_oponent_check = true;//Math.random() > 0.5 ? true : false;
 
     if(do_oponent_check) {
 
@@ -35,8 +35,9 @@ function App() {
       // if you lost the checking action, the exchange does not occur and the next round begins
       if (new_game_state.lost_check !== random_oponent_id) {
 
-        setGameState({...new_game_state, kabuki_exchange_ongoing: false});
-        StartNextRound();
+        setGameState({...new_game_state, kabuki_exchange_ongoing: false, 
+                                         kabuki_finished_count: state.kabuki_finished_count += 1});
+        return(0);
       }
     };
 
