@@ -250,7 +250,7 @@ function App() {
   };
 
   const Steal2Coins = (robber_id, oponent_id) => {
-    const do_oponent_check = Math.random() > 0.5 ? true : false;
+    const do_oponent_check = Math.random() > 0.99 ? true : false;
     var new_game_state = {...state};
 
     // does the oponent want to check if the robber indeed has Samurai?
@@ -258,11 +258,15 @@ function App() {
     // if the check wasn't performed, the lost check indicator is null;
     // if the check was performed and the robber lost, nothing changes, the next round starts;
     // if the check was performed and the oponent lost, the robbery takes place and then the next round starts
-    new_game_state = new_game_state.lost_check === oponent_id && Steal(robber_id, oponent_id, new_game_state.players);
+    if ((new_game_state.lost_check === oponent_id) || !do_oponent_check ) { 
+
+      new_game_state = Steal(robber_id, oponent_id, state.players);
+
+    };
 
     setGameState(new_game_state);
     StartNextRound();
-  }
+  };
 
   const Take3Coins = (taker_id, players) => {
     players[taker_id].coin_counter += 3;
@@ -765,7 +769,7 @@ function App() {
     players[player_id].card_1_dead = false;
     players[player_id].card_2_image = persona_2;
     players[player_id].card_2_dead = false;
-    players[player_id].coin_counter = 0;
+    players[player_id].coin_counter = 5;
     players[player_id].dead = false;
     players[player_id].message = '';
 
