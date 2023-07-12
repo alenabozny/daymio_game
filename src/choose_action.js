@@ -16,7 +16,7 @@ const ACTIONS = {0: ["I'm gonna take 1 coin from the bank.",
                      "I just took 3 coins from the bank."], 
                  3: ["I'm gonna steal 2 coins from ",
                      "I just stole 2 coins from "], 
-                 4: ["I'm gonna user KABUKI superpowers and change my cards.",
+                 4: ["I'm gonna use KABUKI superpowers and change my cards.",
                      "I just changed my cards!"], 
                  5: ["For 7 coins I'm gonna kill ",
                      "I just killed "], 
@@ -43,11 +43,7 @@ export function RandomOponentId(props) {
                     } else { return (id); };
                   }).filter( j => j !== -1 );
 
-  // console.log("Oponent ids: " + oponent_ids);
-
   var random_oponent_id = oponent_ids[Math.floor(Math.random()*oponent_ids.length)];
-
-  console.log("Oponent: " + players[random_oponent_id].name);
 
   return random_oponent_id;
 }
@@ -66,8 +62,7 @@ function PossibleActions(props) {
   var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2)
                                                     .filter(player => !player.dead)
                                                     .filter(player => player !== props.player);
-  console.log('Players from whom we can steal: ');
-  console.log(players_from_whom_we_can_steal);
+
   if (players_from_whom_we_can_steal.length === 0) { possible_actions.splice(3, 1); }
 
   return possible_actions
@@ -90,11 +85,14 @@ export function ChooseAction(props) {
                                                                                   current_player_id: current_player_id,
                                                                                   action_id: action_id}) : null ;
 
+  var oponent_name = (['3', '5', '6']).includes(action_id) ? players[random_oponent_id].name : '';
+  var initial_message = ACTIONS[action_id][0] + oponent_name;
+  var postround_message = ACTIONS[action_id][1] + oponent_name;
 
 
   return({action_id: action_id,
-          initial_message: ACTIONS[action_id][0],
-          postround_message: ACTIONS[action_id][1],
+          initial_message: initial_message,
+          postround_message: postround_message,
           oponent_id: random_oponent_id,
           players: players});
 };
