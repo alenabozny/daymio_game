@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/daymio_game/static/css/main.f86c3e21.css",
-    "main.js": "/daymio_game/static/js/main.3301af87.js",
+    "main.js": "/daymio_game/static/js/main.1409ddb0.js",
     "static/js/787.1e0928c5.chunk.js": "/daymio_game/static/js/787.1e0928c5.chunk.js",
     "index.html": "/daymio_game/index.html",
     "main.f86c3e21.css.map": "/daymio_game/static/css/main.f86c3e21.css.map",
-    "main.3301af87.js.map": "/daymio_game/static/js/main.3301af87.js.map",
+    "main.1409ddb0.js.map": "/daymio_game/static/js/main.1409ddb0.js.map",
     "787.1e0928c5.chunk.js.map": "/daymio_game/static/js/787.1e0928c5.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f86c3e21.css",
-    "static/js/main.3301af87.js"
+    "static/js/main.1409ddb0.js"
   ]
 }
