@@ -27,15 +27,12 @@ export default function Counter(seconds) {
     var counter = seconds;
     
 
-    // Update the count down every 1 second
     var x = setInterval(function() {
-      // Display the result in the element with id="counter"
       document.getElementById("counter").innerHTML = seconds + "s ";
 
-      // If the count down is finished, write some text
       if (seconds < 0) {
           clearInterval(x);
-          document.getElementById("counter").innerHTML = "EXPIRED";
+          // document.getElementById("counter").innerHTML = "EXPIRED";
         }
 
       seconds -= 1;

@@ -20,7 +20,7 @@ function Player(props) {
 
     return(
       <div className={'player-card ' + props.dead} >
-          <div className='message'>{props.message}</div>
+          <div className='message down'>{props.message}</div>
           <div className="user-details">
               <p>Name: {props.name}</p>
               <p>Number of coins: {props.coin_counter}</p>

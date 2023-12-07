@@ -1,16 +1,152 @@
+
+body {
+  background-color: #d1a762;
+  font-family: 'RobotoSlab';
+}
+    
+h2 {
+  color: #d1372d;
+  font-family: Hayamichi;
+  font-size: xx-large;
+  font-weight: initial;
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#hand img{
+    width: 45%;
+    margin: 2.5%;
+    max-width: 100px;
+    box-shadow: -4px 3px 5px #605d44;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: #d1a763;
+  box-shadow: 1px -3px 11px;
+  padding: 2%;
+}
+
+.nav-instruction-block {
+    height: min-content;
+    display: -webkit-inline-box;
+    width: 32%;
+    background-color: ;
   }
+
+.nav-instruction-block p {
+    width: 66%;
+    padding-left: 3%;
+    font-size: smaller;
+    margin: 0;
+}
+
+.nav-instruction-block img {
+  height: 100px;
+  display: block;
+}
+
+.introduction {
+  text-align: center;
+  width: 60%;
+  margin: auto;
+}
+
+.introduction h1 {
+  font-family: Hayamichi;
+  font-size: xx-large;
+  font-weight: initial;
+}
+
+.introduction p {
+  font-family: robotoslab;
+}
+
+.introduction h1 span {
+  color: #d1372d;
+}
+
+.note {
+  color: #d1372d;
+}
+
+.start_button {
+  margin-bottom: 30px;
+  background-color: black;
+  border: 0;
+  /* color: white; */
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 15px;
+}
+
+.start_button h2 {
+    color: #d1a762;
+    font-family: 'Hayamichi';
+    font-size: xx-large;
+}
+
+.message {
+  padding: 15px;
+  border-radius: 15px;
+  z-index: -100;
+}
+
+.message::after {
+  display: block; width: 0; content: "";
+  border: 15px solid transparent;
+}
+
+.message.down::after {
+  border-top-color: #d3d3d3;;
+  border-bottom: 0;
+}
+
+.message {
+  position: relative;
+}
+.message::after { position: absolute; }
+.message.down::after {
+  bottom: -15px; left: calc(50% - 15px);
+}
+
+.options {
+  margin: 20px;
+  padding: 20px;
+  background-color: inherit;
+}
+
+button {
+    display: block;
+    margin: 5px auto;
+    padding: 10px 25px;
+    border: 0;
+    border-radius: 5px;
+    font-family: 'RobotoSlab';
+    font-size: large;
+    text-transform: uppercase;
+}
+
+.option-button {
+  color: black;
+}
+
+.counteraction-button {
+  color: #d1a762;
+}
+
+#counter {
+    font-family: Hayamichi;
+    font-size: xx-large;
+
+}
+
+#next-round-button {
+  color: black;
 }
 
 .App-header {
@@ -28,11 +164,107 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.card img {
+  max-width: 125px;
+  float: left;
+  margin: 7px;
+  box-shadow: -4px 3px 5px #605d44;
+  border-radius: 15px;
+  width: 45%;
+  margin: 2.5%;
 }
+
+.players {
+  display: inline-block;
+}
+
+.player-card {
+  float: left;
+  padding: 10px;
+  width: 45%;
+  padding: 2.5%;
+}
+
+.player-card button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 50%;
+  font-size: 18px;
+}
+
+.note {
+  color: red;
+}
+
+.message {
+  background-color: lightgrey;
+  width: 90%;
+  padding: 5%;
+}
+
+.player-card .card {
+  max-width: 100px;
+  display: inline;
+}
+
+.player-card .profile-img {
+  width: 200px;
+  padding: 50px;
+}
+
+.true {
+  opacity: 50%;
+}
+
+.false {
+  opacity: 100%;
+}
+
+.disable {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-main {
+  position:fixed;
+  background: white;
+  width: 80%;
+  height: auto;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+}
+
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}
+
+@font-face {
+ font-family: "Hayamichi";
+ src: local("Hayamichi"),
+  url("./fonts/Hayamichi.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "RobotoSlab";
+  src: local("RobotoSlab"),
+    url("./fonts/RobotoSlab.ttf") format("truetype");
+}
+

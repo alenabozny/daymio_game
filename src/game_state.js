@@ -1,52 +1,44 @@
 var game_state = {
   players: [
       {
-      	avatar: "https://placehold.co/125x125",
         name: "Adam",
-        email: "ad@shave.pl",
         card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: true,
         coin_counter: 0,
-        message:''
+        message:'...'
       },
       {
-      	avatar: "https://placehold.co/125x125",
         name: "Ola",
-        email: "ad@shave.pl",
         card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: true,
         coin_counter: 0,
-        message:''
+        message:'...'
       },
       {
-      	avatar: "https://placehold.co/125x125",
         name: "Marek",
-        email: "ad@shave.pl",
         card_1_dead: true,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
         coin_counter: 0,
-        message:''
+        message:'...'
       },
       {
-      	avatar: "https://placehold.co/125x125",
         name: "You",
-        email: "ad@shave.pl",
         card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
         coin_counter: 10,
-        message:''
+        message:'...'
       }],
 
 	round: 3,

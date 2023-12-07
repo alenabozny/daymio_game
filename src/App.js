@@ -1,8 +1,10 @@
 import './App.css';
-import "./styles.css";
 // import Player from './player';
 import { GeishaModal, GeishaCheckModal, TwoCoinsModal } from './modal';
+import {Row, Col, Container, Button, Nav, Navbar} from "react-bootstrap";
+
 import Board from './board.js';
+import StartGameView from './start_game_view.js';
 import React, { useState, useEffect } from "react";
 import game_state from './game_state.js';
 import Checkbox from './checkbox.js';
@@ -10,6 +12,24 @@ import { ChooseAction, RandomOponentId } from './choose_action.js';
 import HasNCoins from './has_n_coins.js';
 // import CountDown from './count_down.js';
 import ShowCardsForKabukiExchange from './show_cards_for_kabuki_exchange.js';
+import BasicExample from './navbar-example.js';
+
+import geisha from './images/geisha.png';
+import daimyo from './images/daimyo.png';
+import ninja from './images/ninja.png';
+import kabuki from './images/kabuki.png';
+import samurai from './images/samurai.png';
+
+const IMAGES = {
+  'geisha': geisha,
+  'daymio': daimyo,
+  'ninja' : ninja,
+  'kabuki': kabuki,
+  'samurai': samurai
+};
+
+const COUNTER = 10;
+
 
 function App() {
   const [state, setGameState] = useState(game_state);
@@ -147,7 +167,7 @@ function App() {
       <>
       <h4>Kill (for 7 coins) </h4>
       {oponents.map((oponent, id) =>(
-          !oponent.dead &&  <button onClick={() => kill(oponents, id, 7)}>
+          !oponent.dead &&  <button className="option-button" onClick={() => kill(oponents, id, 7)}>
                               {oponent.name}
                             </button>
         ))}
@@ -163,7 +183,7 @@ function App() {
       <>
       { oponents_to_steal_from.length !== 0 && <h4>Steal 2 coins from</h4> }
           {oponents_to_steal_from.map((oponent, id) =>(
-            <button key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button>
+            <button className="option-button" key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button>
         ))}
       </>
     )
@@ -548,7 +568,7 @@ function App() {
     }
     
     // set timer for other users rounds
-    var counter = 3;
+    var counter = COUNTER;
 
     if (players[3].dead) { // if you lost the game
 
@@ -570,7 +590,7 @@ function App() {
 
       document.getElementById("counter").innerHTML = 'Your round is ongoing.';
       setGameState({ ...state, round: newround, action_ongoing: true});
-      document.getElementById("next_round_button").innerHTML = 'Finish your round';
+      document.getElementById("next-round-button").innerHTML = 'Finish your round';
 
     } else { // if the round belongs to an oponent
 
@@ -587,14 +607,14 @@ function App() {
       players[newround].message = action.initial_message;
 
       var interval_id = setInterval(function() {
-        document.getElementById("counter").innerHTML = "You have" + counter + "seconds to decide...";
-        document.getElementById('next_round_button').style.display = 'none';
+        document.getElementById("counter").innerHTML = "You have " + counter + " seconds to decide...";
+        document.getElementById('next-round-button').style.display = 'none';
 
         if ((counter < 0) && !state.geisha_modal) {
 
             clearInterval(interval_id);
             document.getElementById("counter").innerHTML = 'Player ' + players[newround].name + ' finished the round.';
-            document.getElementById('next_round_button').style.display = 'block';
+            document.getElementById('next-round-button').style.display = 'block';
 
             new_game_state = updateGameState(action.action_id, players, newround, action.oponent_id);
             new_game_state.players[newround].message = action.postround_message;
@@ -604,6 +624,12 @@ function App() {
 
         counter -= 1;
       }, 1000);
+
+      new_game_state.players.forEach(function (value, i) {
+          if ( i != newround ) {
+            new_game_state.players[i].message = '...'
+          }
+      });
 
       setGameState({ ...new_game_state, round: newround, 
                    action_ongoing: action.action_id,
@@ -623,12 +649,12 @@ function App() {
   return (
       <>
         <br />
-        { HasNCoins(players[3], 10) ? '' : <button onClick={ Take1Coin } > Take one coin from the bank.</button> }
-        { HasNCoins(players[3], 9) ? '' : <button onClick={ Take2Coins } > Take two coins from the bank.</button> }
-        { HasNCoins(players[3], 8) ? '' : <button onClick={ TakeCoinsAsDaymio } >(Pretend that) you have a Daymio, take 3 coins from the bank.</button> }
+        { HasNCoins(players[3], 10) ? '' : <Button className="option-button" onClick={ Take1Coin } > Take one coin from the Bank.</Button> }
+        { HasNCoins(players[3], 9) ? '' : <Button className="option-button" onClick={ Take2Coins } > Take two coins from the Bank.</Button> }
+        { HasNCoins(players[3], 8) ? '' : <Button className="option-button" onClick={ TakeCoinsAsDaymio } >(Pretend that) you have a Daymio, take 3 coins from the Bank.</Button> }
 
-        <button onClick={ToggleKabukiExchangeOn}>(Pretend that) you have a Kabuki, change your cards.
-        </button>
+        <Button className="option-button" onClick={ToggleKabukiExchangeOn}>(Pretend that) you have a Kabuki, change your cards.
+        </Button>
         
         { HasNCoins(players[3],8) ? '' : <Steal2CoinsButtons oponents={oponents} />}
         { HasNCoins(players[3], 3) ? <KillFor3Buttons oponents={oponents} /> : ''}
@@ -711,7 +737,7 @@ function App() {
       counteraction_message = "(pretend that) you have a Daymio, let " + players[round].name + " not take 2 coins!";
       return (
         <>
-          <button onClick={() => DaymioPreventsTaking2Coins(round) }> {counteraction_message} </button>
+          <button className="counteraction-button" onClick={() => DaymioPreventsTaking2Coins(round) }> {counteraction_message} </button>
         </>
       )
 
@@ -720,7 +746,7 @@ function App() {
       counteraction_message = "Check if " + players[round].name + " has Daymio.";
       return (
         <>
-          <button onClick={ () => CheckDaymioWhenPlayerTakes3Coins({postround_message: "I just took 3 coins from the bank"}) }> {counteraction_message} </button>
+          <button className="counteraction-button" onClick={ () => CheckDaymioWhenPlayerTakes3Coins({postround_message: "I just took 3 coins from the bank"}) }> {counteraction_message} </button>
         </>
       )
 
@@ -729,7 +755,7 @@ function App() {
       counteraction_message = "Check if " + players[round].name + " has Samurai";
       return (
         <>
-          <button onClick={() => CheckIfOponentHas({oponent_id: state.round, persona: 'samurai', postround_message: "I just stole 2 coins from You"}) }> {counteraction_message} </button>
+          <button className="counteraction-button" onClick={() => CheckIfOponentHas({oponent_id: state.round, persona: 'samurai', postround_message: "I just stole 2 coins from You"}) }> {counteraction_message} </button>
         </>
       )
 
@@ -738,14 +764,14 @@ function App() {
       counteraction_message = "Check if " + players[round].name + " has Kabuki";
       return (
         <>
-          <button onClick={() => CheckIfOponentHas({oponent_id: state.round, persona: 'kabuki', postround_message: "I just changed my cards"}) }> {counteraction_message} </button>
+          <button className="counteraction-button" onClick={() => CheckIfOponentHas({oponent_id: state.round, persona: 'kabuki', postround_message: "I just changed my cards"}) }> {counteraction_message} </button>
         </>
       )
 
     } else if (action_ongoing === '6' && props.state.oponent_id === 3) {
       return (
         <>
-          <button onClick={() => { ToggleGeishaModal(); clearInterval(state.interval_id) }}> 
+          <button className="counteraction-button" onClick={() => { ToggleGeishaModal(); clearInterval(state.interval_id) }}> 
             'See your options for a ninja attack'
           </button>
         </>
@@ -790,32 +816,10 @@ function App() {
   const NewGame = () => {
     return (
       <>
-      <br /> Players receive 2 character cards to start. Everyone knows only their cards.
-      The goal of the game - SURVIVE.
-      <ol> In every move:
-        <li>  Get a coin from the treasury, OR </li>
-        <li>  Take two coins from the treasury, OR </li>
-        <li>  Use character skills, OR </li>
-        <li>  Perform a "Coup d'Etat": Pay seven coins and kill an enemy character </li>
-      </ol>
-      
-      <br /> You can have a maximum of ten coins.
-      <br /> You can bluff and use any character's abilities, regardless of what cards you have.
-      <br /> Checking consists in forcing the player to reveal the card of the character being used.
-      <br /> Only the player against whom the skill is used can check.
-      <br /> Exceptions - Daimyo's first ability and Kabuki's first ability.
-      <br /> 
-      <br /> Right check:
-      <br /> The bluffer permanently loses the revealed card. His move is invalidated.
-      <br /> Invalid check:
-      <br /> The player returns the revealed character to the deck and shuffles. Fetches a new card.
-      <br /> The caller chooses one of his cards and permanently loses it.
-      <br /> A dead character remains exposed until the end of the game.
-      <br /> A failed geisha bluff or a false ninja call results in the loss of both cards.
-      <br /> The player who loses all cards dies. His money is returned to the treasury.
-      <br /> 
-      <br /> <p className='note'> Note that this is a tutorial. For simplicity, check actions are between you and the other players only. The other players don't check each other (which definitely will happen in a real play). </p>
-      <button onClick={() => StartNextGame()}><h2>Start new Game!</h2></button>
+      <StartGameView />
+      <Container className="introduction">
+        <button className="start_button" onClick={() => StartNextGame()}><h2>START NEW GAME!</h2></button>
+      </Container>
       </>
       )
 
@@ -823,22 +827,25 @@ function App() {
 
   const RenderBoard = () => {
     return(
-    <>
-      { state.geisha_check_modal &&  
+      <>
+    <BasicExample />
+    
+    <Container className="introduction">
+      { state.geisha_check_modal &&
         <GeishaCheckModal  
                handleCheckGeisha = { () => handleCheckGeisha(3, state.oponent_id) }
                handleNoCheckGeisha = { () => handleNoCheckGeisha() }
                show = { state.geisha_check_modal }
                children = { <p> Your oponent defends him/herself with Geisha. Do you want to check if he/she indeed has Geisha? </p> } />
       }
-      { state.geisha_modal &&  
+      { state.geisha_modal &&
         <GeishaModal handleGeishaProtectAction = { () => handleGeishaProtectAction(state.round) } 
                handleGeishaNoAction = { handleGeishaNoAction }
                handleCheckGeishaAction = { () => handleCheckGeishaAction(state.round) }
                show = { state.geisha_modal }
                children = { <p> What do you want to do? </p> } />
       }
-      { state.twocoins_modal &&  
+      { state.twocoins_modal &&
         <TwoCoinsModal handleTwoCoinsAction = { () => handleTwoCoinsAction(state.oponent_id) } 
                handleTwoCoinsNoAction = { handleTwoCoinsNoAction }
                show = { state.twocoins_modal }
@@ -846,24 +853,30 @@ function App() {
       }
 
       <h1>Round of player: {state.players[state.round].name}</h1>
-      <h2>Your hand: {state.players[3].card_1_image + ' ' + state.players[3].card_2_image}</h2>
+      <h2>Your hand:</h2>
+      <div id='hand'>
+        < img src={ IMAGES[state.players[3].card_1_image] } />
+        < img src={ IMAGES[state.players[3].card_2_image] } />
+      </div>
 
-      <div className='options'>
+      <div className='counteractions'>
          { ( state.action_ongoing && (state.round !== 3)) && RenderCounteraction({state: state}) }
       </div>
 
       <div id='counter'></div>
-      <button id='next_round_button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
-      <div>
-        <Board />
-      </div>
 
-        { (state.kabuki_exchange_ongoing) && 
+      <button id='next-round-button' className={state.round === 3 ? 'disable' : ''} onClick={() => StartNextRound() }> Start next round </button>
+              { (state.kabuki_exchange_ongoing) && 
             <KabukiChangeCards kabuki_hand = { state.kabuki_hand } />}
 
       <div className='options'>
         { state.round === 3 ? RenderPossibleActions({state: state}) : '' }
       </div>
+
+      <div>
+        <Board />
+      </div>
+    </Container>
     </>
     )
   };

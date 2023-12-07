@@ -1,7 +1,7 @@
 import React from "react";
 import Player from './player.js';
 import game_state from './game_state.js';
-
+import {Row, Col, Container, Button} from "react-bootstrap";
 
 class Board extends React.Component {
 	constructor(props) {
@@ -15,7 +15,6 @@ class Board extends React.Component {
 					{game_state.players.map((player, id) =>(
 					<Player
 					  key={id}
-					  avatar={player.avatar}
 					  name={player.name}
 					  email={player.email}
 					  coin_counter={player.coin_counter}
