@@ -16,10 +16,15 @@ h2 {
 }
 
 #hand img{
-    width: 45%;
-    margin: 2.5%;
-    max-width: 100px;
-    box-shadow: -4px 3px 5px #605d44;
+  margin: 2.5%;
+  max-width: 100px;
+  box-shadow: -4px 3px 5px #605d44;
+}
+
+#hand {
+  color: #d1372d;
+  border: 1px solid black;
+
 }
 
 .navbar {
@@ -181,8 +186,8 @@ button {
 .player-card {
   float: left;
   padding: 10px;
-  width: 45%;
-  padding: 2.5%;
+  width: 22%;
+  padding: 1%;
 }
 
 .player-card button {

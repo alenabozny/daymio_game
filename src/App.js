@@ -1,7 +1,7 @@
 import './App.css';
 // import Player from './player';
 import { GeishaModal, GeishaCheckModal, TwoCoinsModal } from './modal';
-import {Row, Col, Container, Button, Nav, Navbar} from "react-bootstrap";
+import {Row, Container, Button} from "react-bootstrap";
 
 import Board from './board.js';
 import StartGameView from './start_game_view.js';
@@ -12,21 +12,13 @@ import { ChooseAction, RandomOponentId } from './choose_action.js';
 import HasNCoins from './has_n_coins.js';
 // import CountDown from './count_down.js';
 import ShowCardsForKabukiExchange from './show_cards_for_kabuki_exchange.js';
-import BasicExample from './navbar-example.js';
+import CustomNavbar from './navbar.js';
 
 import geisha from './images/geisha.png';
 import daimyo from './images/daimyo.png';
 import ninja from './images/ninja.png';
 import kabuki from './images/kabuki.png';
 import samurai from './images/samurai.png';
-
-const IMAGES = {
-  'geisha': geisha,
-  'daymio': daimyo,
-  'ninja' : ninja,
-  'kabuki': kabuki,
-  'samurai': samurai
-};
 
 const COUNTER = 10;
 
@@ -828,7 +820,7 @@ function App() {
   const RenderBoard = () => {
     return(
       <>
-    <BasicExample />
+    <CustomNavbar props = {state} />
     
     <Container className="introduction">
       { state.geisha_check_modal &&
@@ -853,11 +845,7 @@ function App() {
       }
 
       <h1>Round of player: {state.players[state.round].name}</h1>
-      <h2>Your hand:</h2>
-      <div id='hand'>
-        < img src={ IMAGES[state.players[3].card_1_image] } />
-        < img src={ IMAGES[state.players[3].card_2_image] } />
-      </div>
+
 
       <div className='counteractions'>
          { ( state.action_ongoing && (state.round !== 3)) && RenderCounteraction({state: state}) }
