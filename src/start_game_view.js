@@ -1,5 +1,5 @@
 import React from 'react';
-import animation from './images/personas_animation.mp4';
+import animation from './images/animation.gif';
 import {Row, Container} from "react-bootstrap";
 
 
@@ -18,10 +18,7 @@ class StartGameView extends React.Component {
 				  </h1>
 			  </Row>
 			  <Row className="introduction">
-				<video height="400" loop autoplay="" muted>
-					<source src={animation} type="video/mp4" />
-					Your browser does not support the video tag.
-				</video>
+			  <img src={animation} />
 			  </Row>
 			</Container>
 
