@@ -35,6 +35,14 @@ h2 {
   padding: 2%;
 }
 
+.nav-instruction.expanded {
+  display: block;
+}
+
+.nav-instruction {
+  display: none;
+}
+
 .nav-instruction-block {
     height: min-content;
     display: -webkit-inline-box;
