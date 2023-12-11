@@ -52,18 +52,25 @@ function PossibleActions(props) {
   var possible_actions = Object.keys(ACTIONS);
   var player = props.player;
 
-  player.coin_counter < 3 && possible_actions.splice(6, 1);
-  player.coin_counter < 7 && possible_actions.splice(5, 1);
-  player.coin_counter > 9 && possible_actions.splice(0, 1);
-  if (player.coin_counter > 8) { possible_actions.splice(1,1); possible_actions.splice(3,1) };
-  player.coin_counter > 7 && possible_actions.splice(2,1); 
-                                 
+  if ( player.coin_counter < 3 ) { possible_actions.splice(5, 2); } // having 0, 1, 2 coins, they can steal, make card exchange, take coins from treasury, but they can not yet kill
+  else if ( player.coin_counter < 7 ) { possible_actions.splice(5, 1); } // having 3, 4, 5, 6 coins they can do all of the above, and kill with Ninja
+  // having 7 coins they can do everything
+  else if ( player.coin_counter === 8 ) { possible_actions.splice(2, 1); } // having 8 coins they can no longer take 3 coins from the Treasury
+  else if (player.coin_counter === 9 ) { possible_actions.splice(1, 3); } // having 9 coins they can no longer take 2 or 3 coins from the Treasury, nor can they steal
+  else if (player.coin_counter === 10 ) { possible_actions.splice(0, 5); } // having 10 coins they have to kill
+
   // check if we can steal from anybody in the game
   var players_from_whom_we_can_steal = props.players.filter(player => player.coin_counter >= 2)
                                                     .filter(player => !player.dead)
                                                     .filter(player => player !== props.player);
 
-  if (players_from_whom_we_can_steal.length === 0) { possible_actions.splice(3, 1); }
+  // if there is no one from we can steal, 
+  if (players_from_whom_we_can_steal.length === 0) { 
+    possible_actions.indexOf(3) !== -1 && possible_actions.splice(possible_actions.indexOf(3),1); 
+  };
+
+  console.log(player.name + " has " + player.coin_counter + " coins, possible actions:")
+  console.log(possible_actions)
 
   return possible_actions
 }
@@ -79,8 +86,8 @@ export function ChooseAction(props) {
 
   action_id = possible_actions[Math.floor(Math.random() * num_actions)];
 
-  console.log("Possible actions: ");
-  console.log(possible_actions);
+  // console.log("Possible actions: ");
+  // console.log(possible_actions);
 
   var random_oponent_id = (['3', '5', '6']).includes(action_id) ? RandomOponentId({players: players, 
                                                                                   current_player_id: current_player_id,

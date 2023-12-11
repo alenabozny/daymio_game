@@ -1,6 +1,6 @@
 import React from "react";
 
-export const GeishaModal = ({handleGeishaProtectAction, handleGeishaNoAction, handleCheckGeishaAction, show, children}) => {
+export const GeishaModal = ({handleGeishaProtectAction, handleGeishaNoAction, handleCheckNinjaAction, show, children}) => {
   const showHideClassName = show ? "modal display-block" : "modal display-none";
 
   return (
@@ -12,7 +12,7 @@ export const GeishaModal = ({handleGeishaProtectAction, handleGeishaNoAction, ha
           (Pretend that) you have Geisha, protect yourself!
         </button>
 
-        <button type="button" onClick={ handleCheckGeishaAction }>
+        <button type="button" onClick={ handleCheckNinjaAction }>
           Check if your attacker has ninja
         </button>
 

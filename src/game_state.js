@@ -7,8 +7,8 @@ var game_state = {
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
-        dead: true,
-        coin_counter: 4,
+        dead: false,
+        coin_counter: 10,
         message:'...'
       },
       {
@@ -18,19 +18,19 @@ var game_state = {
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
-        dead: true,
-        coin_counter: 3,
+        dead: false,
+        coin_counter: 10,
         message:'...'
       },
       {
         id: 2,
         name: "Marek",
-        card_1_dead: true,
+        card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 3,
+        coin_counter: 10,
         message:'...'
       },
       {
@@ -41,7 +41,7 @@ var game_state = {
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 10,
+        coin_counter: 9,
         message:'...'
       }],
 

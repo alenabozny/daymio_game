@@ -232,6 +232,8 @@ button {
 
 .true {
   opacity: 50%;
+  position: relative;
+  z-index: -1;
 }
 
 .false {

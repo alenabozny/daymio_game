@@ -23,7 +23,7 @@ import CustomNavbar from './navbar.js';
 // IMPORTANT TODO
 // PLAYER MUST HAVE AN OPPORTUNITY TO CHOOSE WHICH CARD WILL DIE IF HE HAS TWO IN HAND
 
-const COUNTER = 2;
+const COUNTER = 3;
 
 
 function App() {
@@ -204,7 +204,7 @@ function App() {
       <>
       { oponents_to_steal_from.length !== 0 && <h4>Steal 2 coins from</h4> }
           {oponents_to_steal_from.map((oponent) =>(
-            <button className="option-button" key={oponent.id} onClick={() => Steal2Coins(3, oponent.id)}> {oponent.name} {oponent.id} </button>
+            <button className="option-button" key={oponent.id} onClick={() => Steal2Coins(3, oponent.id)}> {oponent.name} </button>
         ))}
       </>
     )
@@ -394,16 +394,21 @@ function App() {
       setGameState({...new_game_state, geisha_modal: false});
       StartNextRound();
     } else {
-      setGameState({...state, geisha_modal: false, 
+      setGameState({...state, players: [...state.players, state.players[oponent_id].coin_counter -= 3],
+                              geisha_modal: false, 
                               defeated_geisha_attact_count: state.defeated_geisha_attact_count += 1});
       alert('The ninja attact was defeated!')
     }
   }
 
-  const handleCheckGeishaAction = (oponent_id) => {
+  const handleCheckNinjaAction = (oponent_id) => {
+    var players = [...players, players[oponent_id].coin_counter -= 3,
+                               players[oponent_id].message = 'I just lost checking action (did not have ninja)'];
     var new_game_state = OponentChecks(3, oponent_id, 'ninja');
 
-    setGameState({...new_game_state, geisha_modal: false, 
+
+    setGameState({...new_game_state, players: players,
+                                     geisha_modal: false, 
                                      defeated_geisha_attact_count: state.defeated_geisha_attact_count += 1});
   };
 
@@ -487,7 +492,10 @@ function App() {
       new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1, geisha_check_modal: false}
     } else {
       // 3.2.2.
-      new_game_state = {...new_game_state, players: players, ninja_attack_count: state.ninja_attack_count += 1, geisha_check_modal: false}
+      new_game_state = {...new_game_state, 
+                           players: [...players, players[ninja_attacker_id].coin_counter -= 3], 
+                           ninja_attack_count: state.ninja_attack_count += 1, 
+                           geisha_check_modal: false}
     }
 
     setGameState(new_game_state)
@@ -497,7 +505,8 @@ function App() {
     // 3.1.
     var players = state.players;
 
-    setGameState({...state, geisha_check_modal: false, 
+    setGameState({...state, players: [...players, players[3].coin_counter -= 3],
+                            geisha_check_modal: false, 
                             ninja_attack_count: state.ninja_attack_count += 1, 
                             players: players})
   };
@@ -545,6 +554,11 @@ function App() {
 
       };
 
+      //       // if it is a Geisha check, the oponent dies with both personas
+      // if (persona === 'geisha') { 
+      //   OnePersonaDies(oponent_id);
+      // }
+
       new_game_state = {...state, players: players, lost_check: checker_id, deck: new_game_state.deck};
 
     // if don't... then the oponent dies
@@ -557,11 +571,6 @@ function App() {
       // does not exchange any card. His/her cards were not revealed.
 
       new_game_state = {...state, players: players, lost_check: oponent_id};
-
-      // if it is a Geisha check, the oponent dies with both personas
-      if (persona === 'geisha') { 
-        OnePersonaDies(oponent_id) 
-      }
 
     };
 
@@ -823,7 +832,7 @@ function App() {
       return (
         <>
           <button className="counteraction-button" onClick={() => { ToggleGeishaModal(); clearInterval(state.interval_id) }}> 
-            'See your options for a ninja attack'
+            See your options for a ninja attack
           </button>
         </>
       )
@@ -845,7 +854,7 @@ function App() {
     players[player_id].card_1_dead = false;
     players[player_id].card_2_image = persona_2;
     players[player_id].card_2_dead = false;
-    players[player_id].coin_counter = 0;
+    // players[player_id].coin_counter = 0; // REMOVE COMMENT AFTER TESTS!
     players[player_id].dead = false;
     players[player_id].message = '';
 
@@ -892,7 +901,7 @@ function App() {
       { state.geisha_modal &&
         <GeishaModal handleGeishaProtectAction = { () => handleGeishaProtectAction(state.round) } 
                handleGeishaNoAction = { handleGeishaNoAction }
-               handleCheckGeishaAction = { () => handleCheckGeishaAction(state.round) }
+               handleCheckNinjaAction = { () => handleCheckNinjaAction(state.round) }
                show = { state.geisha_modal }
                children = { <p> What do you want to do? </p> } />
       }
