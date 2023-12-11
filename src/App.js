@@ -1,7 +1,7 @@
 import './App.css';
 // import Player from './player';
-import { GeishaModal, GeishaCheckModal, TwoCoinsModal } from './modal';
-import {Row, Container, Button} from "react-bootstrap";
+import { GeishaModal, GeishaCheckModal, TwoCoinsModal, WPTKModal } from './modal';
+import {Container, Button} from "react-bootstrap";
 
 import Board from './board.js';
 import StartGameView from './start_game_view.js';
@@ -14,13 +14,16 @@ import HasNCoins from './has_n_coins.js';
 import ShowCardsForKabukiExchange from './show_cards_for_kabuki_exchange.js';
 import CustomNavbar from './navbar.js';
 
-import geisha from './images/geisha.png';
-import daimyo from './images/daimyo.png';
-import ninja from './images/ninja.png';
-import kabuki from './images/kabuki.png';
-import samurai from './images/samurai.png';
+// import geisha from './images/geisha.png';
+// import daimyo from './images/daimyo.png';
+// import ninja from './images/ninja.png';
+// import kabuki from './images/kabuki.png';
+// import samurai from './images/samurai.png';
 
-const COUNTER = 10;
+// IMPORTANT TODO
+// PLAYER MUST HAVE AN OPPORTUNITY TO CHOOSE WHICH CARD WILL DIE IF HE HAS TWO IN HAND
+
+const COUNTER = 2;
 
 
 function App() {
@@ -63,6 +66,32 @@ function App() {
   const ToggleGeishaModal = () => {
     setGameState({...state, geisha_modal: true});
   };
+
+  // WPTK - Which Persona To Kill
+  // const ChooseWPTK = ({ options, wptk }) => {
+
+  //   console.log(options);
+  //   console.log(wptk);
+
+  //   const handleWPTKChange=(e)=>{
+  //     setGameState({...state, wptk: e.target.value })
+  //   }
+
+  //   return (
+  //     <>
+  //            <form>
+  //               <input type="radio" value={ options[0] } id={ options[0] }
+  //                 onChange={handleWPTKChange} name="wptk" />
+  //               <label for={ options[0] }>{ options[0] }</label>
+
+  //               <input type="radio" value={ options[1] } id={ options[1] }
+  //                 onChange={handleWPTKChange} name="wptk"/>
+  //               <label for={ options[1] }>{ options[1] }</label>
+  //            </form>
+  //            <p> You chose --> {wptk} </p>
+  //     </>
+  //           )
+  // };
 
   const KabukiChangeCards = (props) => {
 
@@ -174,8 +203,8 @@ function App() {
     return (
       <>
       { oponents_to_steal_from.length !== 0 && <h4>Steal 2 coins from</h4> }
-          {oponents_to_steal_from.map((oponent, id) =>(
-            <button className="option-button" key={id} onClick={() => Steal2Coins(3, id)}> {oponent.name} </button>
+          {oponents_to_steal_from.map((oponent) =>(
+            <button className="option-button" key={oponent.id} onClick={() => Steal2Coins(3, oponent.id)}> {oponent.name} {oponent.id} </button>
         ))}
       </>
     )
@@ -236,7 +265,20 @@ function App() {
     if (!players[player_id].card_1_dead) {
 
       players[player_id].card_1_dead = true; 
-      setGameState({...new_game_state, players: players}); 
+
+    // TODO
+    // if the player is You, and You still have two cards, player can choose which persona dies
+
+      // if (player_id===3) {
+      //   alert("You can choose which persona to kill first");
+      //   setGameState({...new_game_state, wptk_ongoing: true});
+      // } else {
+      //   setGameState({...new_game_state, players: players });
+      // };
+
+      setGameState({...new_game_state, players: players });
+
+      
 
     } else if (!players[player_id].card_2_dead) {
 
@@ -251,6 +293,7 @@ function App() {
 
       setGameState({...new_game_state, players: players, lost_check: player_id}); 
     };
+
 
     return players;
   };
@@ -321,6 +364,23 @@ function App() {
       OnePersonaDies(3);
       setGameState({...state, geisha_modal: false});
       StartNextRound();
+  };
+
+  const handleKill = (index) => {
+    var new_players = [...state.players];
+
+    if (index === 0) {
+      new_players[3].card_1_dead = true;
+
+      setGameState({...state, players: new_players})
+    } else {
+      new_players[3].card_1_imag = state.players[3].card_2_image;
+      new_players[3].card_2_image = state.players[3].card_1_image;
+      new_players[3].card_1_dead = true;
+
+      setGameState({...state, players: new_players})
+    }
+    StartNextRound();
   };
 
   const handleGeishaProtectAction = (oponent_id) => {
@@ -445,7 +505,7 @@ function App() {
   const OponentChecks = (checker_id, oponent_id, persona) => {
     var new_game_state = {...state};
     var players = state.players;
-    alert(players[checker_id].name + ' wants to know if ' + players[oponent_id].name + ' have '+ persona);
+    alert(players[checker_id].name + ' want(s) to know if ' + players[oponent_id].name + ' have / has '+ persona);
     var oponent_1_image = players[oponent_id].card_1_image;
     var oponent_1_dead = players[oponent_id].card_1_dead;
     var oponent_2_image = players[oponent_id].card_2_image;
@@ -459,8 +519,9 @@ function App() {
     {
  
       players = OnePersonaDies(checker_id);
-      alert(players[checker_id].name + ' dies, because of the lost checking action.');
+      alert(players[checker_id].name + ' die(s), because of the lost checking action.');
 
+      
       // console.log("Old deck: " + state.deck);
 
       // the winner of the checking action (oponent in this case) 
@@ -484,19 +545,16 @@ function App() {
 
       };
 
-      console.log("Newer deck: " + new_game_state.deck);
-      console.log("New winner hand: " + [players[oponent_id].card_1_image, players[oponent_id].card_2_image]);
-
       new_game_state = {...state, players: players, lost_check: checker_id, deck: new_game_state.deck};
 
     // if don't... then the oponent dies
     } else {
 
       players = OnePersonaDies(oponent_id);
-      alert(players[oponent_id].name + ' dies, because of the lost checking action.');
+      alert(players[oponent_id].name + ' die(s), because of the lost checking action.');
       
       // the winner of the checking action (checker in this case) 
-      // does not exchange any card. Hes/her cards were not revealed.
+      // does not exchange any card. His/her cards were not revealed.
 
       new_game_state = {...state, players: players, lost_check: oponent_id};
 
@@ -618,7 +676,7 @@ function App() {
       }, 1000);
 
       new_game_state.players.forEach(function (value, i) {
-          if ( i != newround ) {
+          if ( i !== newround ) {
             new_game_state.players[i].message = '...'
           }
       });
@@ -684,6 +742,7 @@ function App() {
       players[state.round].message = "I just lost checking action";
     } else {
       players[state.round].message = props.postround_message;
+      players[state.round].coin_counter += 3;
     } ;
 
     setGameState({...new_game_state, players: players, action_ongoing: false});
@@ -842,6 +901,13 @@ function App() {
                handleTwoCoinsNoAction = { handleTwoCoinsNoAction }
                show = { state.twocoins_modal }
                children = { <p> {state.players[state.oponent_id].name} (pretends that he/she) has Daymio and prevents you from taking 2 coins. What do you want to do? </p> } />
+      }
+      { state.wptk_ongoing &&
+        <WPTKModal handleKillFirst = { () => handleKill(0) } 
+               handleKillSecond = { handleKill(1) }
+               show = { state.wptk_ongoing }
+               children = { <p> One of your personas must die. Which one? </p> }
+               options = { [state.players[3].card_1_image, state.players[3].card_2_image] } />
       }
 
       <h1>Round of player: {state.players[state.round].name}</h1>

@@ -64,3 +64,25 @@ export const TwoCoinsModal = ({handleTwoCoinsAction, handleTwoCoinsNoAction, sho
     </div>
   );
 };
+
+export const WPTKModal = ({handleKillFirst, handleKillSecond, show, children, options}) => {
+  const showHideClassName = show ? "modal display-block" : "modal display-none";
+
+  return (
+    <div className={ showHideClassName }>
+      <section className="modal-main">
+        {children}
+
+        <button type="button" onClick={ handleKillFirst }>
+          Kill {options[0]}
+        </button>
+
+        <button type="button" onClick={ handleKillSecond }>
+          Kill {options[1]}
+        </button>
+      </section>
+    </div>
+  );
+};
+
+

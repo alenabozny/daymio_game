@@ -1,36 +1,40 @@
 var game_state = {
   players: [
       {
+        id: 0,
         name: "Adam",
         card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: true,
-        coin_counter: 0,
+        coin_counter: 4,
         message:'...'
       },
       {
+        id: 1,
         name: "Ola",
         card_1_dead: false,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: true,
-        coin_counter: 0,
+        coin_counter: 3,
         message:'...'
       },
       {
+        id: 2,
         name: "Marek",
         card_1_dead: true,
         card_2_dead: false,
         card_1_image: NaN,
         card_2_image: NaN,
         dead: false,
-        coin_counter: 0,
+        coin_counter: 3,
         message:'...'
       },
       {
+        id: 3,
         name: "You",
         card_1_dead: false,
         card_2_dead: false,
@@ -47,6 +51,9 @@ var game_state = {
 
   kabuki_exchange_ongoing: false,
   kabuki_hand: {},
+
+  wptk_ongoing: false,
+  wptk: NaN,
 
   kabuki_finished_count: 0,
   defeated_geisha_attact_count: 0,
