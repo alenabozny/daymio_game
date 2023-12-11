@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/daymio_game/static/css/main.41325e4e.css",
-    "main.js": "/daymio_game/static/js/main.f0dfec4f.js",
+    "main.css": "/daymio_game/static/css/main.95c804ec.css",
+    "main.js": "/daymio_game/static/js/main.472dc6d6.js",
     "static/js/787.8efc3ace.chunk.js": "/daymio_game/static/js/787.8efc3ace.chunk.js",
     "static/media/animation.gif": "/daymio_game/static/media/animation.b0924712026d62a6dec7.gif",
     "static/media/reverse.png": "/daymio_game/static/media/reverse.3d65396f875e2f8b213a.png",
@@ -13,12 +13,12 @@
     "static/media/geisha.png": "/daymio_game/static/media/geisha.4d87654c357be180a13f.png",
     "static/media/RobotoSlab.ttf": "/daymio_game/static/media/RobotoSlab.b6aa3c203f8622669cc6.ttf",
     "index.html": "/daymio_game/index.html",
-    "main.41325e4e.css.map": "/daymio_game/static/css/main.41325e4e.css.map",
-    "main.f0dfec4f.js.map": "/daymio_game/static/js/main.f0dfec4f.js.map",
+    "main.95c804ec.css.map": "/daymio_game/static/css/main.95c804ec.css.map",
+    "main.472dc6d6.js.map": "/daymio_game/static/js/main.472dc6d6.js.map",
     "787.8efc3ace.chunk.js.map": "/daymio_game/static/js/787.8efc3ace.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.41325e4e.css",
-    "static/js/main.f0dfec4f.js"
+    "static/css/main.95c804ec.css",
+    "static/js/main.472dc6d6.js"
   ]
 }
